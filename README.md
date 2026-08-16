@@ -146,8 +146,13 @@ periférico, e aqui o display é o único dispositivo no SPI. Se o seu não tive
 CS, troque `#define TFT_CS D8` por `#define TFT_CS -1` no topo do `.ino` e não
 ligue esse fio — sobra um GPIO.
 
-**Evite:** ST7735 (128×160, resolução baixa demais para os olhos), 1.69"
-240×280 (retangular, quebra o layout), e qualquer módulo que peça 5 V.
+**Checklist para aprovar um anúncio:**
+
+| | |
+|---|---|
+| ✅ **Aprova** | controlador **ST7789** (ou ST7789V / ST7789VW), **240×240**, **1.54"** ou **1.3"**, **SPI**, **3,3 V** |
+| ❌ **Rejeita** | ST7735 / ILI9341 / ILI9488 (outro controlador, outro código) · 240×280, 135×240, 320×240 (resolução diferente, quebra o layout dos olhos) · **GC9A01** (funciona, mas é redondo — é o caminho dos dois olhos separados, outro projeto) · só 5 V · com touch (não usamos e encarece) |
+| ⚠️ **Confirmar** | quantos pinos (7 sem CS / 8 com CS) · barra de pinos soldada ou solta |
 
 > **Duas armadilhas que não aparecem na lista de peças:**
 >
