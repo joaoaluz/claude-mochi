@@ -38,7 +38,13 @@
 
 // ---------------------------------------------------------------- pinagem ---
 // Labels D* sao do NodeMCU / Wemos D1 mini. SCK e MOSI sao fixos no HW SPI.
-#define TFT_CS   D8   // GPIO15
+//
+// TFT_CS: os modulos ST7789 240x240 vem em duas variantes.
+//   8 pinos -> tem CS: deixe D8 como esta e ligue o fio.
+//   7 pinos -> NAO tem CS (fica em GND internamente): troque para -1
+//              e nao ligue fio nenhum. Um pino livre de brinde.
+// As duas funcionam: o display e o unico dispositivo no barramento SPI.
+#define TFT_CS   D8   // GPIO15 — use -1 se o seu modulo nao tiver pino CS
 #define TFT_DC   D1   // GPIO5
 #define TFT_RST  D2   // GPIO4
 #define TFT_BLK  D6   // GPIO12 (backlight via PWM; ou ligue BLK direto em 3V3)

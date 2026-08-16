@@ -103,8 +103,8 @@ sua mesa, ao lado do notebook, e aí **serial resolve.**
 | Item | Obs |
 |---|---|
 | **ESP8266** (NodeMCU, Wemos D1 mini ou ESP-12) | 3,3 V — ideal para o display |
-| **Display ST7789 1.54" 240×240 SPI**, módulo de **7 pinos (com CS)** | **VCC só em 3,3 V, nunca 5 V** |
-| Jumpers dupont fêmea-fêmea 10 cm (7 fios) *ou* fio silicone 30 AWG + solda | solda deixa bem mais compacto |
+| **Display ST7789 240×240 SPI**, 1.54" ou 1.3" | veja a seção abaixo. **VCC só em 3,3 V, nunca 5 V** |
+| Jumpers dupont fêmea-fêmea 10 cm | 7 fios (ou 6, se o módulo não tiver CS) |
 | 2× parafuso M2×6 mm | prende o display |
 | Fita dupla face fina | fixa a placa do ESP |
 | Cabo USB | alimentação **e** dados (no modo serial os dois são usados) |
@@ -114,8 +114,41 @@ sua mesa, ao lado do notebook, e aí **serial resolve.**
 6×6 mm para trocar de modo, buzzer piezo passivo (bipe no hook `Stop`), 1–3
 LEDs WS2812B para as bochechas.
 
-> Se for usar o modo serial, garanta que o seu cabo USB **tem os fios de dados**.
-> Muito cabo barato é só de carga e não enumera a porta.
+**Não é preciso nenhum resistor.** O ESP8266 e o display são ambos 3,3 V — não
+há divisor de tensão, level shifter nem pull-up neste circuito.
+
+### Qual display comprar
+
+**Primeira escolha: ST7789 IPS 1.54" 240×240 SPI.** Área ativa de ~27,7 mm
+contra ~23,4 mm da versão 1.3" — num rosto de mochi esses milímetros viram
+olhos visivelmente maiores. É também o tamanho usado pelo projeto de referência.
+
+**Alternativa igualmente boa: 1.3" 240×240 ST7789**, mais barata e bem mais
+comum no Brasil. Mesmo controlador, mesma resolução, **firmware idêntico** — só
+muda `scr_active` no `.scad`.
+
+**7 ou 8 pinos, tanto faz.** Os módulos vêm em duas variantes:
+
+| Variante | Pinos | CS |
+|---|---|---|
+| 8 pinos | GND VCC SCL SDA RES DC BLK **CS** | tem |
+| 7 pinos | GND VCC SCL SDA RES DC BLK | não tem — fica em GND internamente |
+
+A única desvantagem do sem-CS é não poder dividir o barramento SPI com outro
+periférico, e aqui o display é o único dispositivo no SPI. Se o seu não tiver
+CS, troque `#define TFT_CS D8` por `#define TFT_CS -1` no topo do `.ino` e não
+ligue esse fio — sobra um GPIO.
+
+**Evite:** ST7735 (128×160, resolução baixa demais para os olhos), 1.69"
+240×280 (retangular, quebra o layout), e qualquer módulo que peça 5 V.
+
+> **Duas armadilhas que não aparecem na lista de peças:**
+>
+> 1. O módulo quase sempre vem com a **barra de pinos solta, não soldada** — sem
+>    soldar não encaixa em jumper nem protoboard. Precisa de ferro de solda.
+> 2. O **cabo USB precisa ter fios de dados**. Muito cabo barato é só de carga e
+>    nem enumera a porta serial — no modo serial isso é fatal, e o sintoma é
+>    confuso (a placa liga e a tela acende, mas nenhuma porta aparece no PC).
 
 **O Arduino Uno não entra neste projeto.** Sem Wi-Fi, lógica 5 V (mataria o
 display de 3,3 V sem level shifter) e 2 KB de RAM — não anima 240×240. E se a
@@ -137,11 +170,13 @@ Alimente o display **apenas com 3,3 V**.
 | SDA / MOSI | D7 | GPIO13 |
 | RES / RST | D2 | GPIO4 |
 | DC | D1 | GPIO5 |
-| CS | D8 | GPIO15 |
+| CS | D8 | GPIO15 — *só se o módulo tiver esse pino* |
 | BLK | D6 (PWM) ou 3V3 | GPIO12 |
 
 `SCK` e `MOSI` são fixos (SPI por hardware); os outros são configuráveis no topo
 do `.ino`. Evite D0/D3/D4 para o display — são pinos de boot no ESP8266.
+
+Módulo de 7 pinos (sem CS): pule essa linha e use `#define TFT_CS -1`.
 
 ---
 
