@@ -47,9 +47,18 @@
 #define TFT_CS   D8   // GPIO15 — use -1 se o seu modulo nao tiver pino CS
 #define TFT_DC   D1   // GPIO5
 #define TFT_RST  D2   // GPIO4
-#define TFT_BLK  D6   // GPIO12 (backlight via PWM; ou ligue BLK direto em 3V3)
 // SCK  -> D5 (GPIO14)
 // MOSI -> D7 (GPIO13)
+
+// Backlight. O jeito mais simples e ligar BLK direto no 3V3 e deixar
+// USE_BLK_PIN em 0 — um fio a menos e nada para dar errado. Coloque 1 se
+// quiser controlar o brilho por software (ai ligue BLK no pino abaixo).
+#define USE_BLK_PIN 0
+#define TFT_BLK  D6   // GPIO12 (so usado se USE_BLK_PIN for 1)
+
+// Animacao de boot: varre o contexto de 0 a 100% e volta, logo ao ligar.
+// Serve para validar display e fiacao na protoboard SEM depender do PC.
+#define BOOT_DEMO 1
 
 Adafruit_ST7789 tft = Adafruit_ST7789(TFT_CS, TFT_DC, TFT_RST);
 
@@ -188,6 +197,27 @@ static void drawBar(int pct) {
   }
 }
 
+#if BOOT_DEMO
+// Varre 0 -> 100 -> 0% de contexto ao ligar. Se isto animar, display e
+// fiacao estao corretos; nada disso depende do PC ou da rede.
+static void bootDemo() {
+  for (int step = 0; step <= 200; step += 4) {
+    const int      pct  = (step <= 100) ? step : (200 - step);
+    const float    open = 1.0f - 0.72f * (pct / 100.0f);
+    const int16_t  h    = (int16_t)(EYE_RY * open);
+    const uint16_t iris = levelColor(pct);
+    drawEye(EYE_CX_L, EYE_CY, h, iris, false, false);
+    drawEye(EYE_CX_R, EYE_CY, h, iris, false, false);
+    drawBar(pct);
+    delay(10);
+  }
+  // Termina no estado "cochilando", esperando o PC.
+  drawEye(EYE_CX_L, EYE_CY, 0, C_EYE, false, true);
+  drawEye(EYE_CX_R, EYE_CY, 0, C_EYE, false, true);
+  drawBar(0);
+}
+#endif
+
 // =============================================================== ligacao ====
 
 // Aplica um par "chave=valor".
@@ -256,7 +286,9 @@ static void handleState() {
 
 static void handleBacklight() {
   st.backlight = server.arg("on") != "0";
+#if USE_BLK_PIN
   analogWrite(TFT_BLK, st.backlight ? 1023 : 0);
+#endif
   server.send(200, "text/plain", "ok");
 }
 
@@ -308,13 +340,19 @@ static void startWifi() {
 void setup() {
   Serial.begin(115200);
 
+#if USE_BLK_PIN
   pinMode(TFT_BLK, OUTPUT);
   analogWrite(TFT_BLK, 1023);
+#endif
 
   tft.init(240, 240);
   tft.setSPISpeed(40000000);  // se a imagem sair com ruido, baixe para 20000000
   tft.setRotation(2);         // ajuste 0..3 conforme a orientacao do seu modulo
   tft.fillScreen(C_FACE);
+
+#if BOOT_DEMO
+  bootDemo();
+#endif
 
 #if LINK_WIFI
   startWifi();

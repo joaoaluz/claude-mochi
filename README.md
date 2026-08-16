@@ -15,6 +15,13 @@ funcionar offline por um hotspot.
 
 ---
 
+**Começando do zero?** Vá direto para **[docs/PROTOBOARD.md](docs/PROTOBOARD.md)** —
+montagem na protoboard, sem case e sem solda no circuito, com um teste em cada
+etapa. O firmware roda uma animação de boot que valida display e fiação sem
+depender do PC.
+
+---
+
 ## Como funciona
 
 A **status line** do Claude Code roda a cada mensagem do assistente e recebe um
@@ -171,7 +178,7 @@ Alimente o display **apenas com 3,3 V**.
 | RES / RST | D2 | GPIO4 |
 | DC | D1 | GPIO5 |
 | CS | D8 | GPIO15 — *só se o módulo tiver esse pino* |
-| BLK | D6 (PWM) ou 3V3 | GPIO12 |
+| BLK | **3V3** | ou D6/GPIO12, se quiser controlar o brilho (`USE_BLK_PIN 1`) |
 
 `SCK` e `MOSI` são fixos (SPI por hardware); os outros são configuráveis no topo
 do `.ino`. Evite D0/D3/D4 para o display — são pinos de boot no ESP8266.
