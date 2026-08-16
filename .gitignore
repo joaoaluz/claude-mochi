@@ -1,0 +1,8 @@
+# Credenciais de Wi-Fi — nunca commitar
+firmware/claude_mochi/config.h
+
+# Saídas de build / fatiamento
+*.stl
+*.3mf
+*.gcode
+build/

@@ -1,0 +1,42 @@
+{
+  "_comentario": "Cole o bloco statusLine no seu ~/.claude/settings.json. Se você já tem uma status line, apenas troque o command.",
+  "statusLine": {
+    "type": "command",
+    "command": "~/.claude/statusline-mochi.sh",
+    "padding": 1
+  },
+
+  "_comentario_hooks": "Opcional: os hooks abaixo acendem o modo 'busy' (pisca mais rápido) enquanto o Claude trabalha, e voltam para 'idle' quando ele termina. A status line não sabe distinguir isso sozinha.",
+  "hooks": {
+    "UserPromptSubmit": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "curl -fsS -m 0.4 \"http://${MOCHI_HOST:-mochi.local}/tokens?state=busy\" >/dev/null 2>&1 || true"
+          }
+        ]
+      }
+    ],
+    "Stop": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "curl -fsS -m 0.4 \"http://${MOCHI_HOST:-mochi.local}/tokens?state=idle\" >/dev/null 2>&1 || true"
+          }
+        ]
+      }
+    ],
+    "PreCompact": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "curl -fsS -m 0.4 \"http://${MOCHI_HOST:-mochi.local}/tokens?state=compact\" >/dev/null 2>&1 || true"
+          }
+        ]
+      }
+    ]
+  }
+}
