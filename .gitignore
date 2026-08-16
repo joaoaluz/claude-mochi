@@ -6,3 +6,7 @@ firmware/claude_mochi/config.h
 *.3mf
 *.gcode
 build/
+
+# Python
+__pycache__/
+*.pyc
