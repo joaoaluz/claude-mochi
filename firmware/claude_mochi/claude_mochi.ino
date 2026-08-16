@@ -3,34 +3,49 @@
 // Placa   : ESP8266 (NodeMCU / Wemos D1 mini / ESP-12)
 // Display : ST7789 1.54" 240x240 SPI (modulo de 7 pinos, com CS)
 //
-// O ESP entra na sua rede Wi-Fi como cliente (nao cria hotspot) e expoe:
-//   GET /              -> pagina de status
-//   GET /state         -> JSON com o estado atual
-//   GET /tokens?ctx=42&win=63&state=busy
-//   GET /backlight?on=0|1
+// DOIS MODOS DE LIGACAO (escolha um abaixo em LINK_SERIAL / LINK_WIFI):
 //
-// O script host/statusline-mochi.sh chama /tokens a cada mensagem do Claude Code.
+//   Serial (padrao, recomendado)
+//     O PC manda linhas pela USB: "ctx=42 win=63 state=busy\n".
+//     Nao precisa de rede nenhuma. Funciona em Wi-Fi corporativo,
+//     em rede de visitante, ou totalmente offline. A pilha Wi-Fi nem
+//     sobe, entao sobra RAM para o display.
+//     Do lado do PC quem fala com a porta e host/mochi-serial.py.
+//
+//   Wi-Fi
+//     O ESP entra na sua rede como cliente e expoe um endpoint HTTP.
+//     So use se o PC e o mochi estiverem na MESMA rede e o roteador
+//     nao tiver isolamento de cliente (a maioria das redes de empresa
+//     tem, e ai isso nao funciona).
+//
+// Protocolo serial: uma linha por atualizacao, pares chave=valor
+// separados por espaco, terminada em \n. Chaves aceitas: ctx, win, state.
+
+#define LINK_SERIAL 1
+#define LINK_WIFI   0
 
 #include <Adafruit_GFX.h>
 #include <Adafruit_ST7789.h>
 #include <SPI.h>
-#include <ESP8266WiFi.h>
-#include <ESP8266WebServer.h>
-#include <ESP8266mDNS.h>
 
-#include "config.h"
+#if LINK_WIFI
+  #include <ESP8266WiFi.h>
+  #include <ESP8266WebServer.h>
+  #include <ESP8266mDNS.h>
+  #include "config.h"      // copie de config.example.h (so precisa no modo Wi-Fi)
+  ESP8266WebServer server(80);
+#endif
 
 // ---------------------------------------------------------------- pinagem ---
 // Labels D* sao do NodeMCU / Wemos D1 mini. SCK e MOSI sao fixos no HW SPI.
 #define TFT_CS   D8   // GPIO15
 #define TFT_DC   D1   // GPIO5
 #define TFT_RST  D2   // GPIO4
-#define TFT_BLK  D6   // GPIO12 (backlight via PWM; ou ligue VCC do BLK em 3V3)
+#define TFT_BLK  D6   // GPIO12 (backlight via PWM; ou ligue BLK direto em 3V3)
 // SCK  -> D5 (GPIO14)
 // MOSI -> D7 (GPIO13)
 
 Adafruit_ST7789 tft = Adafruit_ST7789(TFT_CS, TFT_DC, TFT_RST);
-ESP8266WebServer server(80);
 
 // ------------------------------------------------------------------ cores ---
 static const uint16_t C_FACE   = 0xF71C;  // creme, o "rosto" do mochi
@@ -40,6 +55,7 @@ static const uint16_t C_WARN   = 0xFCA0;  // ambar
 static const uint16_t C_HOT    = 0xE0A3;  // vermelho
 static const uint16_t C_SHINE  = 0xFFFF;  // brilho do olho
 static const uint16_t C_TRACK  = 0xE71C;  // trilho da barra
+static const uint16_t C_SLEEP  = 0xD69A;  // olhos "dormindo" (sem dados)
 
 // --------------------------------------------------------------- geometria ---
 static const int16_t SCR       = 240;
@@ -53,24 +69,29 @@ static const int16_t BAR_H     = 10;
 static const int16_t BAR_X     = 34;
 static const int16_t BAR_W     = SCR - 2 * BAR_X;
 
+// Sem noticias do PC por este tempo -> o mochi "cochila".
+static const unsigned long IDLE_TIMEOUT_MS = 30000;
+
 // ------------------------------------------------------------------ estado ---
 struct State {
-  int   ctx      = 0;      // % da janela de contexto usada
-  int   win      = 0;      // % do limite de 5h usado
-  char  mode[12] = "idle";  // idle | busy | compact
+  int   ctx       = 0;       // % da janela de contexto usada
+  int   win       = 0;       // % do limite de 5h usado
+  char  mode[12]  = "idle";  // idle | busy | compact
   bool  backlight = true;
   unsigned long lastPing = 0;
+  bool  everPinged = false;
 } st;
 
-static float  openNow   = 1.0f;   // abertura atual da palpebra (animada)
+static float  openNow    = 1.0f;   // abertura atual da palpebra (animada)
 static float  openTarget = 1.0f;
-static bool   blinking  = false;
+static bool   blinking   = false;
 static unsigned long blinkUntil = 0;
 static unsigned long nextBlink  = 0;
 static int    lastDrawnCtx = -1;
 static int    lastDrawnWin = -1;
 static int    lastEyeH     = -1;
 static bool   lastCrossed  = false;
+static bool   lastAsleep   = false;
 
 // ------------------------------------------------------------------- utils ---
 static int clampi(int v, int lo, int hi) { return v < lo ? lo : (v > hi ? hi : v); }
@@ -81,8 +102,8 @@ static uint16_t mix(uint16_t a, uint16_t b, float t) {
   if (t > 1) t = 1;
   int ar = (a >> 11) & 0x1F, ag = (a >> 5) & 0x3F, ab = a & 0x1F;
   int br = (b >> 11) & 0x1F, bg = (b >> 5) & 0x3F, bb = b & 0x1F;
-  int r = ar + (int)((br - ar) * t);
-  int g = ag + (int)((bg - ag) * t);
+  int r  = ar + (int)((br - ar) * t);
+  int g  = ag + (int)((bg - ag) * t);
   int bl = ab + (int)((bb - ab) * t);
   return (uint16_t)((r << 11) | (g << 5) | bl);
 }
@@ -91,6 +112,10 @@ static uint16_t mix(uint16_t a, uint16_t b, float t) {
 static uint16_t levelColor(int pct) {
   if (pct <= 60) return mix(C_OK, C_WARN, pct / 60.0f);
   return mix(C_WARN, C_HOT, (pct - 60) / 40.0f);
+}
+
+static bool isAsleep() {
+  return !st.everPinged || (millis() - st.lastPing > IDLE_TIMEOUT_MS);
 }
 
 // ------------------------------------------------------------------ desenho ---
@@ -115,15 +140,21 @@ static void drawCrossEye(int16_t cx, int16_t cy, uint16_t color) {
   }
 }
 
-static void drawEye(int16_t cx, int16_t cy, int16_t ry, uint16_t iris, bool crossed) {
+static void drawEye(int16_t cx, int16_t cy, int16_t ry, uint16_t iris,
+                    bool crossed, bool asleep) {
   // Limpa apenas a area do olho (evita redesenhar a tela toda = sem flicker).
   tft.fillRect(cx - EYE_RX - 4, cy - EYE_RY - 4,
                (EYE_RX + 4) * 2, (EYE_RY + 4) * 2, C_FACE);
 
+  if (asleep) {
+    // Sem dados do PC: olhos fechados, tracinho suave.
+    tft.fillRoundRect(cx - EYE_RX + 4, cy - 2, (EYE_RX - 4) * 2, 5, 2, C_SLEEP);
+    return;
+  }
+
   if (crossed) { drawCrossEye(cx, cy, C_EYE); return; }
 
   if (ry < 3) {
-    // Olho fechado: um traco.
     tft.fillRoundRect(cx - EYE_RX, cy - 2, EYE_RX * 2, 5, 2, C_EYE);
     return;
   }
@@ -135,7 +166,6 @@ static void drawEye(int16_t cx, int16_t cy, int16_t ry, uint16_t iris, bool cros
   int16_t iry = ry * 0.55f;
   if (iry >= 2) fillEllipse(cx, cy, irx, iry, iris);
 
-  // Brilho.
   if (ry > EYE_RY * 0.45f) {
     tft.fillCircle(cx - EYE_RX / 3, cy - ry / 2, 4, C_SHINE);
   }
@@ -152,28 +182,66 @@ static void drawBar(int pct) {
   }
 }
 
-static void redrawAll() {
-  tft.fillScreen(C_FACE);
-  lastDrawnCtx = -1;
-  lastDrawnWin = -1;
-  lastEyeH = -1;
-}
+// =============================================================== ligacao ====
 
-// ------------------------------------------------------------------ web ---
-
-static void handleTokens() {
-  if (server.hasArg("ctx")) st.ctx = clampi(server.arg("ctx").toInt(), 0, 100);
-  if (server.hasArg("win")) st.win = clampi(server.arg("win").toInt(), 0, 100);
-  if (server.hasArg("state")) {
-    strncpy(st.mode, server.arg("state").c_str(), sizeof(st.mode) - 1);
+// Aplica um par "chave=valor".
+static void applyKV(char *kv) {
+  char *eq = strchr(kv, '=');
+  if (!eq) return;
+  *eq = '\0';
+  const char *k = kv;
+  const char *v = eq + 1;
+  if      (!strcmp(k, "ctx"))   st.ctx = clampi(atoi(v), 0, 100);
+  else if (!strcmp(k, "win"))   st.win = clampi(atoi(v), 0, 100);
+  else if (!strcmp(k, "state")) {
+    strncpy(st.mode, v, sizeof(st.mode) - 1);
     st.mode[sizeof(st.mode) - 1] = '\0';
   }
+}
+
+// Aplica uma linha inteira: "ctx=42 win=63 state=busy".
+static void applyLine(char *line) {
+  for (char *tok = strtok(line, " \t"); tok; tok = strtok(NULL, " \t")) applyKV(tok);
   st.lastPing = millis();
+  st.everPinged = true;
+}
+
+#if LINK_SERIAL
+static char    rxbuf[96];
+static uint8_t rxlen = 0;
+
+static void pollSerial() {
+  while (Serial.available()) {
+    char c = (char)Serial.read();
+    if (c == '\n' || c == '\r') {
+      if (rxlen) {
+        rxbuf[rxlen] = '\0';
+        applyLine(rxbuf);
+        rxlen = 0;
+        Serial.println("ok");   // eco para a ponte saber que estamos vivos
+      }
+    } else if (rxlen < sizeof(rxbuf) - 1) {
+      rxbuf[rxlen++] = c;
+    } else {
+      rxlen = 0;               // linha absurda: descarta
+    }
+  }
+}
+#endif
+
+#if LINK_WIFI
+static void handleTokens() {
+  char line[96];
+  snprintf(line, sizeof(line), "ctx=%s win=%s state=%s",
+           server.hasArg("ctx")   ? server.arg("ctx").c_str()   : "",
+           server.hasArg("win")   ? server.arg("win").c_str()   : "",
+           server.hasArg("state") ? server.arg("state").c_str() : "");
+  applyLine(line);
   server.send(200, "text/plain", "ok");
 }
 
 static void handleState() {
-  char buf[160];
+  char buf[176];
   snprintf(buf, sizeof(buf),
            "{\"ctx\":%d,\"win\":%d,\"mode\":\"%s\",\"backlight\":%s,\"uptime_s\":%lu}",
            st.ctx, st.win, st.mode, st.backlight ? "true" : "false", millis() / 1000);
@@ -192,12 +260,42 @@ static void handleRoot() {
            "<!doctype html><meta name=viewport content='width=device-width'>"
            "<body style='font-family:system-ui;background:#14110f;color:#f4f1ea;padding:24px'>"
            "<h2>claude-mochi</h2><p>contexto: <b>%d%%</b><br>limite 5h: <b>%d%%</b><br>"
-           "modo: <b>%s</b><br>ip: %s</p>"
-           "<p><a style='color:#d97757' href='/backlight?on=0'>apagar</a> &middot; "
-           "<a style='color:#d97757' href='/backlight?on=1'>acender</a></p></body>",
+           "modo: <b>%s</b><br>ip: %s</p></body>",
            st.ctx, st.win, st.mode, WiFi.localIP().toString().c_str());
   server.send(200, "text/html", buf);
 }
+
+static void startWifi() {
+  tft.setTextColor(C_EYE);
+  tft.setTextSize(2);
+  tft.setCursor(20, 100);
+  tft.print("conectando");
+
+  WiFi.mode(WIFI_STA);
+  WiFi.hostname(MDNS_NAME);
+  WiFi.begin(WIFI_SSID, WIFI_PASSWORD);
+  for (int i = 0; i < 80 && WiFi.status() != WL_CONNECTED; i++) delay(250);
+
+  tft.fillScreen(C_FACE);
+  tft.setTextSize(1);
+  tft.setCursor(10, 90);
+  if (WiFi.status() == WL_CONNECTED) {
+    tft.print("http://"); tft.print(MDNS_NAME); tft.println(".local");
+    tft.setCursor(10, 106);
+    tft.print(WiFi.localIP());
+    if (MDNS.begin(MDNS_NAME)) MDNS.addService("http", "tcp", 80);
+  } else {
+    tft.print("wifi falhou - confira config.h");
+  }
+  delay(2500);
+
+  server.on("/", handleRoot);
+  server.on("/tokens", handleTokens);
+  server.on("/state", handleState);
+  server.on("/backlight", handleBacklight);
+  server.begin();
+}
+#endif
 
 // ------------------------------------------------------------------ setup ---
 
@@ -212,54 +310,35 @@ void setup() {
   tft.setRotation(2);         // ajuste 0..3 conforme a orientacao do seu modulo
   tft.fillScreen(C_FACE);
 
-  // Tela de boot: mostra o IP para voce achar o mochi na rede.
-  tft.setTextColor(C_EYE);
-  tft.setTextSize(2);
-  tft.setCursor(20, 100);
-  tft.print("conectando");
+#if LINK_WIFI
+  startWifi();
+#endif
 
-  WiFi.mode(WIFI_STA);
-  WiFi.hostname(MDNS_NAME);
-  WiFi.begin(WIFI_SSID, WIFI_PASSWORD);
-  for (int i = 0; i < 80 && WiFi.status() != WL_CONNECTED; i++) {
-    delay(250);
-    Serial.print('.');
-  }
+#if LINK_SERIAL && !LINK_WIFI
+  // Sem Wi-Fi: desliga o radio de vez. Economiza ~20 mA e libera RAM.
+  WiFi.mode(WIFI_OFF);
+  WiFi.forceSleepBegin();
+  delay(1);
+  Serial.println("mochi pronto");
+#endif
 
-  tft.fillScreen(C_FACE);
-  tft.setCursor(10, 90);
-  tft.setTextSize(1);
-  if (WiFi.status() == WL_CONNECTED) {
-    Serial.println();
-    Serial.println(WiFi.localIP());
-    tft.print("http://");
-    tft.print(MDNS_NAME);
-    tft.println(".local");
-    tft.setCursor(10, 106);
-    tft.print(WiFi.localIP());
-    if (MDNS.begin(MDNS_NAME)) MDNS.addService("http", "tcp", 80);
-  } else {
-    tft.print("wifi falhou - confira config.h");
-  }
-  delay(2500);
-
-  server.on("/", handleRoot);
-  server.on("/tokens", handleTokens);
-  server.on("/state", handleState);
-  server.on("/backlight", handleBacklight);
-  server.begin();
-
-  redrawAll();
+  randomSeed(micros());
   nextBlink = millis() + 3000;
 }
 
 // ------------------------------------------------------------------- loop ---
 
 void loop() {
+#if LINK_SERIAL
+  pollSerial();
+#endif
+#if LINK_WIFI
   server.handleClient();
   MDNS.update();
+#endif
 
   const unsigned long now = millis();
+  const bool asleep = isAsleep();
 
   // Piscar: mais rapido enquanto o Claude esta trabalhando.
   const bool busy = (strcmp(st.mode, "busy") == 0);
@@ -279,16 +358,18 @@ void loop() {
   // Suavizacao exponencial para a animacao nao ficar dura.
   openNow += (openTarget - openNow) * 0.28f;
 
-  const bool crossed = (st.ctx >= 95) || (strcmp(st.mode, "compact") == 0);
-  const int16_t eyeH = (int16_t)(EYE_RY * openNow);
-  const uint16_t iris = levelColor(st.ctx);
+  const bool     crossed = (st.ctx >= 95) || (strcmp(st.mode, "compact") == 0);
+  const int16_t  eyeH    = (int16_t)(EYE_RY * openNow);
+  const uint16_t iris    = levelColor(st.ctx);
 
-  if (eyeH != lastEyeH || crossed != lastCrossed || st.ctx != lastDrawnCtx) {
-    drawEye(EYE_CX_L, EYE_CY, eyeH, iris, crossed);
-    drawEye(EYE_CX_R, EYE_CY, eyeH, iris, crossed);
-    lastEyeH = eyeH;
-    lastCrossed = crossed;
+  if (eyeH != lastEyeH || crossed != lastCrossed ||
+      st.ctx != lastDrawnCtx || asleep != lastAsleep) {
+    drawEye(EYE_CX_L, EYE_CY, eyeH, iris, crossed, asleep);
+    drawEye(EYE_CX_R, EYE_CY, eyeH, iris, crossed, asleep);
+    lastEyeH     = eyeH;
+    lastCrossed  = crossed;
     lastDrawnCtx = st.ctx;
+    lastAsleep   = asleep;
   }
 
   if (st.win != lastDrawnWin) {

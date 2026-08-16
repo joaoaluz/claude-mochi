@@ -6,37 +6,22 @@
     "padding": 1
   },
 
-  "_comentario_hooks": "Opcional: os hooks abaixo acendem o modo 'busy' (pisca mais rápido) enquanto o Claude trabalha, e voltam para 'idle' quando ele termina. A status line não sabe distinguir isso sozinha.",
+  "_comentario_hooks": "Opcional: acendem o modo 'busy' (pisca mais rápido) enquanto o Claude trabalha, voltam para 'idle' ao terminar, e viram os olhos de tonto durante a compactação. A status line sozinha não distingue esses estados. Os scripts nunca bloqueiam nem tocam na porta serial.",
   "hooks": {
     "UserPromptSubmit": [
-      {
-        "hooks": [
-          {
-            "type": "command",
-            "command": "curl -fsS -m 0.4 \"http://${MOCHI_HOST:-mochi.local}/tokens?state=busy\" >/dev/null 2>&1 || true"
-          }
-        ]
-      }
+      { "hooks": [ { "type": "command", "command": "~/.claude/mochi-mode.sh busy" } ] }
     ],
     "Stop": [
-      {
-        "hooks": [
-          {
-            "type": "command",
-            "command": "curl -fsS -m 0.4 \"http://${MOCHI_HOST:-mochi.local}/tokens?state=idle\" >/dev/null 2>&1 || true"
-          }
-        ]
-      }
+      { "hooks": [ { "type": "command", "command": "~/.claude/mochi-mode.sh idle" } ] }
     ],
     "PreCompact": [
-      {
-        "hooks": [
-          {
-            "type": "command",
-            "command": "curl -fsS -m 0.4 \"http://${MOCHI_HOST:-mochi.local}/tokens?state=compact\" >/dev/null 2>&1 || true"
-          }
-        ]
-      }
+      { "hooks": [ { "type": "command", "command": "~/.claude/mochi-mode.sh compact" } ] }
+    ],
+    "PostCompact": [
+      { "hooks": [ { "type": "command", "command": "~/.claude/mochi-mode.sh busy" } ] }
+    ],
+    "SessionEnd": [
+      { "hooks": [ { "type": "command", "command": "~/.claude/mochi-mode.sh idle" } ] }
     ]
   }
 }
