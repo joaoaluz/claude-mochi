@@ -292,6 +292,23 @@ Nesse modo não precisa da ponte: a status line fala direto com o ESP.
 
 ## Case 3D
 
+Há **dois** modelos no repositório, ainda não consolidados:
+
+| pasta | para qual placa | estado |
+|---|---|---|
+| `case/mochi.scad` | ESP8266 + display, **com** janela de tela | v0 — nunca renderizado nem impresso |
+| `hardware/mochi.scad` | Raspberry Pi Zero / Pico, **sem** janela de tela | renderizado, sólido fechado, STLs em [`hardware/stl/`](hardware/stl) |
+
+O `hardware/` nasceu de um pedido separado, feito sem saber que o `case/` já
+existia — então é o modelo validado geometricamente, mas mira a placa errada
+para este projeto. O caminho natural é levar para o `case/` o que foi provado
+ali (perfil do corpo, pilares de canto embutidos na parede, `assert` de encaixe
+da placa) e ficar com um modelo só. Até lá, **o case do projeto é o `case/`** — o
+`hardware/` fica como referência, com guia próprio em
+[`hardware/README.md`](hardware/README.md) e `make stl` na raiz.
+
+### case/ — ESP8266 com display
+
 `case/mochi.scad` é um modelo **paramétrico** em OpenSCAD. O corpo é o casco
 convexo de 12 esferas em três andares (base larga, barriga, cúpula), o que dá a
 forma redonda de mochi e permite calcular a parede interna exata só reduzindo o
