@@ -20,6 +20,12 @@ montagem na protoboard, sem case e sem solda no circuito, com um teste em cada
 etapa. O firmware roda uma animação de boot que valida display e fiação sem
 depender do PC.
 
+**O que aparece na tela:** [`docs/tela/tela-mochi.svg`](docs/tela/tela-mochi.svg) —
+todas as telas em escala 1:1 (rampa de contexto, piscar, cochilar, `X_X`) mais uma
+proposta de expressões vindas dos hooks. O desenho é gerado por
+`docs/tela/gera_svg.py`, que copia as constantes e a matemática inteira do
+`.ino`; mexeu no firmware, rode o script de novo.
+
 ---
 
 ## Como funciona
