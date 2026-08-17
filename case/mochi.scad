@@ -49,6 +49,10 @@ face_y         = 23.0;  // plano do rosto: face plana em y = -face_y
 split_y        = 6.0;   // plano de separação frente/tampa (y = +split_y)
 lip_h          = 3.0;   // altura do lábio de encaixe da tampa
 lip_fit        = 0.30;  // folga do lábio
+lip_t          = 1.4;   // espessura radial do lábio
+lip_weld       = 0.8;   // quanto o lábio invade a metade frontal, em y e em
+                        // raio. Sem isso ele encosta na casca só por uma face
+                        // coincidente e sai como um anel solto no STL.
 
 // Bossas de parafuso M2 (para inserto ou parafuso auto-atarraxante).
 boss_r         = 3.2;
@@ -142,10 +146,58 @@ module screen_bosses() {
         }
 }
 
-// Trilho interno onde a placa do ESP encosta (fita dupla face vai aqui).
+// Duas abas onde as bordas da placa do ESP encostam (a fita dupla face vai
+// aqui). Cada aba nasce na parede lateral e avança 3 mm por baixo da placa.
+// Um trilho solto no meio da cavidade — sem tocar parede nenhuma — sairia
+// como peça separada no STL.
 module board_shelf() {
-  translate([0, split_y - 6, 14])
-    cube([brd_w + 2*brd_fit + 4, 3, 2], center = true);
+  shelf_w = brd_w + 2 * brd_fit;   // largura ocupada pela placa
+  intersection() {
+    body_shaped(-wall + lip_weld);        // morde a parede dos dois lados
+    difference() {
+      translate([0, split_y - 6, 14]) cube([2 * body_w, 3, 2], center = true);
+      translate([0, split_y - 6, 14]) cube([shelf_w - 6, 5, 4], center = true);
+    }
+  }
+}
+
+// Lábio de encaixe. São duas faixas em y, e a diferença entre elas é o que
+// mantém a peça inteira:
+//   y > split_y  entra na tampa, rebaixado lip_fit para deslizar;
+//   y < split_y  invade a metade frontal e morde a parede por lip_weld.
+module lip() {
+  // trecho que entra na tampa
+  intersection() {
+    difference() {
+      body_shaped(-wall - lip_fit);
+      body_shaped(-wall - lip_fit - lip_t);
+    }
+    translate([0, split_y + lip_h/2, 200])
+      cube([400, lip_h, 400], center = true);
+  }
+  // trecho de solda, já dentro da metade frontal
+  intersection() {
+    difference() {
+      body_shaped(-wall + lip_weld);
+      body_shaped(-wall - lip_fit - lip_t);
+    }
+    translate([0, split_y - lip_weld/2, 200])
+      cube([400, lip_weld, 400], center = true);
+  }
+}
+
+// Bolsa da tampa que recebe o lábio. Tira só a faixa interna: a parede
+// externa da tampa continua descendo até o plano de corte, senão a caixa
+// montada fica com um vinco aberto de lip_h em toda a volta.
+module lip_pocket() {
+  intersection() {
+    difference() {
+      body_shaped(-wall);
+      body_shaped(-wall - lip_fit - lip_t - 0.2);
+    }
+    translate([0, split_y + lip_h/2, 200])
+      cube([400, lip_h + 0.4, 400], center = true);
+  }
 }
 
 // =============================================================================
@@ -162,16 +214,7 @@ module front_part() {
       }
       screen_bosses();
       board_shelf();
-      // Lábio que entra na tampa.
-      intersection() {
-        body_shaped(-lip_fit);
-        difference() {
-          body_shaped(-wall - lip_fit);
-          body_shaped(-wall - lip_fit - 1.4);
-        }
-        translate([0, split_y + lip_h/2, 200])
-          cube([400, lip_h, 400], center = true);
-      }
+      lip();
     }
     screen_cutouts();
     vents();
@@ -186,9 +229,7 @@ module back_part() {
     }
     usb_cutout();
     vents();
-    // Espaço para o lábio da frente.
-    translate([0, split_y + lip_h/2, 200])
-      cube([400, lip_h + 0.2, 400], center = true);
+    lip_pocket();
   }
 }
 

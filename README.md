@@ -296,7 +296,7 @@ Há **dois** modelos no repositório, ainda não consolidados:
 
 | pasta | para qual placa | estado |
 |---|---|---|
-| `case/mochi.scad` | ESP8266 + display, **com** janela de tela | v0 — nunca renderizado nem impresso |
+| `case/mochi.scad` | ESP8266 + display, **com** janela de tela | renderizado e fechado; medidas de componente ainda por conferir |
 | `hardware/mochi.scad` | Raspberry Pi Zero / Pico, **sem** janela de tela | renderizado, sólido fechado, STLs em [`hardware/stl/`](hardware/stl) |
 
 O `hardware/` nasceu de um pedido separado, feito sem saber que o `case/` já
@@ -321,14 +321,14 @@ openscad -D 'part="back"'  -o back.stl  case/mochi.scad
 
 Use `part="preview"` para ver as duas metades montadas.
 
-> ⚠️ **Este modelo é um ponto de partida v0 e ainda não foi renderizado nem
-> impresso.** Não havia OpenSCAD disponível no ambiente onde ele foi escrito,
-> então a geometria não foi validada visualmente. Antes de imprimir: abra no
-> OpenSCAD, confira o preview, e **meça com paquímetro** o seu display e a sua
-> placa para preencher as variáveis no topo do arquivo — principalmente
+> ⚠️ **A geometria já foi renderizada; as medidas de componente não.**
+> As duas metades exportam como um sólido fechado e conexo cada uma (CGAL:
+> `Simple: yes`, uma peça por STL). O que continua sendo estimativa são as
+> medidas do seu display e da sua placa: antes de imprimir, **meça com
+> paquímetro** e preencha as variáveis no topo do arquivo — principalmente
 > `scr_pcb_w/h`, `scr_active`, `scr_active_dy`, `brd_l/w` e `usb_w/h/z`.
 > Os valores atuais são estimativas para um ST7789 1.54" e um Wemos D1 mini
-> (NodeMCU v3 é bem maior: 58 × 31 mm).
+> (NodeMCU v3 é bem maior: 58 × 31 mm). E ninguém imprimiu isto ainda.
 
 **Impressão:** PLA ou PETG, camada 0,15–0,20 mm, 15% de preenchimento. Imprima a
 casca frontal com o rosto virado para a mesa — a janela sai sem suporte (a
