@@ -30,7 +30,16 @@ brd_w          = 25.6;
 brd_t          = 1.4;
 brd_fit        = 0.4;
 
+// Só o display vai dentro do mochi: o ESP8266 fica de fora, ligado por jumpers
+// (é a montagem de docs/PROTOBOARD.md). Nesse modo a prateleira da placa e o
+// recorte do USB não são gerados — entra no lugar uma saída para o chicote.
+so_display     = true;
+cabo_w         = 12.0;  // largura da saída dos jumpers na traseira
+cabo_h         = 5.0;   // altura
+cabo_z         = 10.0;  // altura do centro a partir da base
+
 // Recorte do conector USB (micro-USB na maioria dos ESP8266).
+// Só usado quando so_display = false.
 usb_w          = 9.0;
 usb_h          = 4.0;
 usb_z          = 12.0;  // altura do centro do conector a partir da base
@@ -128,6 +137,16 @@ module usb_cutout() {
           square([usb_w - 2, usb_h - 2], center = true);
 }
 
+// Saída do chicote de jumpers, no fundo da tampa traseira (so_display = true).
+// Mais larga e mais baixa que o recorte de USB: passam 7 ou 8 fios juntos.
+module cable_slot() {
+  translate([0, body_d/2, cabo_z])
+    rotate([90, 0, 0])
+      linear_extrude(height = 30, center = true)
+        offset(r = 1.5)
+          square([max(cabo_w - 3, 0.1), max(cabo_h - 3, 0.1)], center = true);
+}
+
 // Furos de ventilação discretos na base (o backlight esquenta um pouco).
 module vents() {
   for (i = [-2 : 2])
@@ -213,7 +232,7 @@ module front_part() {
         translate([0, split_y - 200, 200]) cube([400, 400, 400], center = true);
       }
       screen_bosses();
-      board_shelf();
+      if (!so_display) board_shelf();
       lip();
     }
     screen_cutouts();
@@ -227,7 +246,7 @@ module back_part() {
       body_shell();
       translate([0, split_y + 200, 200]) cube([400, 400, 400], center = true);
     }
-    usb_cutout();
+    if (so_display) cable_slot(); else usb_cutout();
     vents();
     lip_pocket();
   }
