@@ -30,6 +30,10 @@ Nada de resistor: os dois lados são 3,3 V.
 
 ## 2. Ligações
 
+<p align="center">
+  <img src="esquema/esquema-mochi.svg" width="820" alt="Esquema das ligações na protoboard">
+</p>
+
 **Confira duas vezes a linha VCC antes de energizar.** 5 V queima o display.
 
 | Display | ESP8266 | Observação |
