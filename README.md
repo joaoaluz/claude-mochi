@@ -15,10 +15,13 @@ funcionar offline por um hotspot.
 
 ---
 
-**Começando do zero?** Vá direto para **[docs/PROTOBOARD.md](docs/PROTOBOARD.md)** —
-montagem na protoboard, sem case e sem solda no circuito, com um teste em cada
-etapa. O firmware roda uma animação de boot que valida display e fiação sem
-depender do PC.
+**Vai construir?** Siga **[docs/PASSO-A-PASSO.md](docs/PASSO-A-PASSO.md)** — o
+caminho completo em 8 fases, do saquinho de peças ao case impresso, com um teste
+que fecha cada fase.
+
+**Só a bancada?** **[docs/PROTOBOARD.md](docs/PROTOBOARD.md)** cobre a montagem na
+protoboard em mais detalhe, sem case e sem solda no circuito. O firmware roda uma
+animação de boot que valida display e fiação sem depender do PC.
 
 **O que aparece na tela:** [`docs/tela/tela-mochi.svg`](docs/tela/tela-mochi.svg) —
 todas as telas em escala 1:1 (rampa de contexto, piscar, cochilar, `X_X`) mais uma
@@ -298,6 +301,7 @@ Há **dois** modelos no repositório, ainda não consolidados:
 |---|---|---|
 | `case/mochi.scad` | ESP8266 + display, **com** janela de tela | renderizado e fechado; medidas de componente ainda por conferir |
 | `hardware/mochi.scad` | Raspberry Pi Zero / Pico, **sem** janela de tela | renderizado, sólido fechado, STLs em [`hardware/stl/`](hardware/stl) |
+| `case/clawd_tela.scad` | **forma do Clawd**, só o display dentro | corta a janela nas malhas do `clawd_mochi.3mf`; as duas peças fecham (`Volumes: 2`) |
 
 O `hardware/` nasceu de um pedido separado, feito sem saber que o `case/` já
 existia — então é o modelo validado geometricamente, mas mira a placa errada
@@ -334,6 +338,62 @@ Use `part="preview"` para ver as duas metades montadas.
 casca frontal com o rosto virado para a mesa — a janela sai sem suporte (a
 orientação `part="front"` já faz isso). Folga de 0,3 mm em volta do display e
 0,3 mm no lábio da tampa.
+
+### case/clawd_tela.scad — a forma do Clawd, com janela
+
+Trabalha em cima das **malhas do seu `clawd_mochi.3mf`** (Bambu Studio),
+extraídas para `models/upstream/3mf-corpo.stl` e `3mf-chapa.stl`. São as duas
+peças do [clawd-mochi](https://github.com/yousifamanuel/clawd-mochi): chapa
+frontal de 2 mm e corpo com cavidade **passante** de 48,50 × 32,25 mm — no seu
+projeto o corpo está achatado em Z, de 38 para **28 mm** (`m22 = 0,7368` na
+matriz do objeto). Esse achatamento está reproduzido em `escala_z`.
+
+O modelo original tem a cara vazada (boca de 9 × 3,25 mm e dois furinhos de
+3,5 mm nas orelhas), não uma tela. O `.scad` acrescenta:
+
+1. **janela** da área ativa, 28,5 × 28,5 mm, com chanfro de 45° na face de fora
+2. **tampa da boca**, que ficaria mordida pela borda da janela
+3. **moldura interna** que segura a PCB contra a chapa, com saia a 45° para
+   imprimir sem suporte nessa região
+
+As malhas de origem **não são versionadas** (`.gitignore` barra `*.stl` e
+`*.3mf`, e são geometria de terceiro sob CC BY-NC-SA). Regenere a partir do seu
+projeto do fatiador e exporte as peças:
+
+```bash
+python3 models/extrai_3mf.py clawd_mochi.3mf
+```
+
+```bash
+make clawd
+```
+
+Ou peça por peça, sem `make`:
+
+```bash
+openscad -o case/stl/clawd-chapa.stl -D 'part="chapa"' case/clawd_tela.scad
+```
+
+Sem parafuso nenhum: a chapa **cola** no aro do corpo. Só o display vai dentro;
+o ESP8266 fica fora e os fios saem pelo fundo, que já é aberto.
+
+A placa do display (31,5 mm) contra a cavidade (32,25 mm) deixa **0,375 mm por
+lado**. Aperta. Existe `alargar` para comer parte da parede de trás, mas ele só
+corta os `alargar_z` mm de cima: a faixa maciça em Y −10,75..−12,5 fecha o fundo
+da cavidade e é de onde saem as quatro perninhas — cortá-la inteira solta as
+perninhas do corpo.
+
+> ⚠️ As medidas do display são **estimativa** (`pcb_x`, `pcb_y`, `ativa`,
+> `ativa_dx`). Meça o seu módulo com paquímetro antes de imprimir.
+
+**Voltando para o fatiador:** `make clawd-3mf` gera `clawd_mochi_tela.3mf`, o seu
+projeto com as duas malhas trocadas — todos os ajustes de fatiamento, perfis e a disposição no prato
+foram preservados; só a escala em Z saiu da matriz e foi assada na malha. As
+miniaturas guardadas ainda mostram o modelo antigo, sem janela; elas se
+regeneram quando você fatiar.
+
+**Licença:** os modelos de origem são CC BY-NC-SA 4.0 — não comercial, com
+atribuição. O que sai daqui é derivado e herda a mesma licença.
 
 ### Alternativa
 
