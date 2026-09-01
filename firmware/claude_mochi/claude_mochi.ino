@@ -1,4 +1,6 @@
 // claude-mochi — olhos que indicam o consumo de tokens do Claude Code.
+// Por padrao os olhos E a barra seguem o LIMITE DE 5 HORAS.
+// Troque em OLHOS_METRICA / BARRA_METRICA.
 //
 // Placa   : ESP8266 (NodeMCU / Wemos D1 mini / ESP-12)
 // Display : ST7789 1.54" 240x240 SPI (modulo de 7 pinos, com CS)
@@ -100,13 +102,41 @@ struct State {
   bool  everPinged = false;
 } st;
 
+// -------------------------------------------------- o que a tela esta medindo ---
+// Cada elemento escolhe sua metrica, de forma independente:
+//   1 -> limite de 5 horas (st.win)
+//   0 -> janela de contexto (st.ctx)
+//
+// Padrao: os DOIS no limite de 5h. Olhos e barra concordam sempre na cor, e a
+// barra da o numero exato que a abertura da palpebra so sugere. A janela de
+// contexto deixa de aparecer na tela — o firmware ainda aceita "ctx=" no
+// protocolo, so nao desenha nada com ele.
+//
+// O limite de 5h anda MUITO mais devagar que o contexto e zera a cada janela,
+// entao o mochi fica bem menos agitado assim. E de proposito: ele mede quanto
+// da sua cota ja foi, nao quanto o chat cresceu.
+#define OLHOS_METRICA 1
+#define BARRA_METRICA 1
+
+#if OLHOS_METRICA
+  #define VAL_OLHOS (st.win)
+#else
+  #define VAL_OLHOS (st.ctx)
+#endif
+
+#if BARRA_METRICA
+  #define VAL_BARRA (st.win)
+#else
+  #define VAL_BARRA (st.ctx)
+#endif
+
 static float  openNow    = 1.0f;   // abertura atual da palpebra (animada)
 static float  openTarget = 1.0f;
 static bool   blinking   = false;
 static unsigned long blinkUntil = 0;
 static unsigned long nextBlink  = 0;
-static int    lastDrawnCtx = -1;
-static int    lastDrawnWin = -1;
+static int    lastDrawnOlhos = -1;
+static int    lastDrawnBarra = -1;
 static int    lastEyeH     = -1;
 static bool   lastCrossed  = false;
 static bool   lastAsleep   = false;
@@ -149,7 +179,7 @@ static void fillEllipse(int16_t cx, int16_t cy, int16_t rx, int16_t ry, uint16_t
   }
 }
 
-// Olho "tonto": um X, para contexto quase estourado ou compactacao.
+// Olho "tonto": um X, para a metrica dos olhos estourando ou compactacao.
 static void drawCrossEye(int16_t cx, int16_t cy, uint16_t color) {
   const int16_t r = 22;
   for (int16_t o = -2; o <= 2; o++) {
@@ -398,30 +428,31 @@ void loop() {
     nextBlink = now + (busy ? random(900, 2000) : random(2800, 6000));
   }
 
-  // Alvo de abertura: 0% de contexto = arregalado, 100% = quase fechado.
-  openTarget = 1.0f - 0.72f * (st.ctx / 100.0f);
+  // Alvo de abertura: 0% = arregalado, 100% = quase fechado.
+  openTarget = 1.0f - 0.72f * (VAL_OLHOS / 100.0f);
   if (blinking) openTarget = 0.0f;
 
   // Suavizacao exponencial para a animacao nao ficar dura.
   openNow += (openTarget - openNow) * 0.28f;
 
-  const bool     crossed = (st.ctx >= 95) || (strcmp(st.mode, "compact") == 0);
+  // Olho de tonto: a metrica dos olhos estourando, ou uma compactacao em curso.
+  const bool     crossed = (VAL_OLHOS >= 95) || (strcmp(st.mode, "compact") == 0);
   const int16_t  eyeH    = (int16_t)(EYE_RY * openNow);
-  const uint16_t iris    = levelColor(st.ctx);
+  const uint16_t iris    = levelColor(VAL_OLHOS);
 
   if (eyeH != lastEyeH || crossed != lastCrossed ||
-      st.ctx != lastDrawnCtx || asleep != lastAsleep) {
+      VAL_OLHOS != lastDrawnOlhos || asleep != lastAsleep) {
     drawEye(EYE_CX_L, EYE_CY, eyeH, iris, crossed, asleep);
     drawEye(EYE_CX_R, EYE_CY, eyeH, iris, crossed, asleep);
-    lastEyeH     = eyeH;
-    lastCrossed  = crossed;
-    lastDrawnCtx = st.ctx;
-    lastAsleep   = asleep;
+    lastEyeH       = eyeH;
+    lastCrossed    = crossed;
+    lastDrawnOlhos = VAL_OLHOS;
+    lastAsleep     = asleep;
   }
 
-  if (st.win != lastDrawnWin) {
-    drawBar(st.win);
-    lastDrawnWin = st.win;
+  if (VAL_BARRA != lastDrawnBarra) {
+    drawBar(VAL_BARRA);
+    lastDrawnBarra = VAL_BARRA;
   }
 
   delay(16);  // ~60 fps
