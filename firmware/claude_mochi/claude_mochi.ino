@@ -68,22 +68,29 @@
 Adafruit_ST7789 tft = Adafruit_ST7789(TFT_CS, TFT_DC, TFT_RST);
 
 // ------------------------------------------------------------------ cores ---
-static const uint16_t C_FACE   = 0xF71C;  // creme, o "rosto" do mochi
+static const uint16_t C_FACE   = 0xFB26;  // laranja forte, o "rosto" do mochi (#FF6633)
+// Matiz do clay da Anthropic (#D97757, H 15) mas com saturacao 100%. O clay
+// puro tem so 63% de saturacao e sai lavado num painel retroiluminado.
+// Outras opcoes do mesmo matiz: 0xFAE3 (#FF5E1A, mais forte),
+// 0xFB63 (#FF6E1A, mais amarelado), 0xDBAA (#D97757, o clay original).
 static const uint16_t C_EYE    = 0x18E3;  // quase preto
 static const uint16_t C_OK     = 0x2E88;  // verde
 static const uint16_t C_WARN   = 0xFCA0;  // ambar
 static const uint16_t C_HOT    = 0xE0A3;  // vermelho
 static const uint16_t C_SHINE  = 0xFFFF;  // brilho do olho
-static const uint16_t C_TRACK  = 0xE71C;  // trilho da barra
+static const uint16_t C_TRACK  = 0x8A44;  // trilho da barra, laranja escuro (#8A4A22)
 static const uint16_t C_SLEEP  = 0xD69A;  // olhos "dormindo" (sem dados)
 
 // --------------------------------------------------------------- geometria ---
 static const int16_t SCR       = 240;
-static const int16_t EYE_CX_L  = 78;
-static const int16_t EYE_CX_R  = 162;
+static const int16_t EYE_CX_L  = 72;
+static const int16_t EYE_CX_R  = 168;
 static const int16_t EYE_CY    = 104;
-static const int16_t EYE_RX    = 30;   // meia-largura do olho
-static const int16_t EYE_RY    = 34;   // meia-altura maxima do olho
+static const int16_t EYE_RX    = 36;   // meia-largura do olho
+static const int16_t EYE_RY    = 42;   // meia-altura maxima do olho
+// A area que drawEye limpa e (EYE_RX+4)*2 por (EYE_RY+4)*2. Com os valores
+// acima isso ocupa x 32..112 e 128..208, e y 58..150 — sem invadir a borda
+// nem a barra (y 206). Se aumentar mais, confira essas contas antes.
 static const int16_t BAR_Y     = 206;
 static const int16_t BAR_H     = 10;
 static const int16_t BAR_X     = 34;
@@ -181,7 +188,7 @@ static void fillEllipse(int16_t cx, int16_t cy, int16_t rx, int16_t ry, uint16_t
 
 // Olho "tonto": um X, para a metrica dos olhos estourando ou compactacao.
 static void drawCrossEye(int16_t cx, int16_t cy, uint16_t color) {
-  const int16_t r = 22;
+  const int16_t r = 28;
   for (int16_t o = -2; o <= 2; o++) {
     tft.drawLine(cx - r, cy - r + o, cx + r, cy + r + o, color);
     tft.drawLine(cx - r, cy + r + o, cx + r, cy - r + o, color);
@@ -215,7 +222,7 @@ static void drawEye(int16_t cx, int16_t cy, int16_t ry, uint16_t iris,
   if (iry >= 2) fillEllipse(cx, cy, irx, iry, iris);
 
   if (ry > EYE_RY * 0.45f) {
-    tft.fillCircle(cx - EYE_RX / 3, cy - ry / 2, 4, C_SHINE);
+    tft.fillCircle(cx - EYE_RX / 3, cy - ry / 2, 5, C_SHINE);
   }
 }
 
@@ -380,7 +387,7 @@ void setup() {
 
   tft.init(240, 240);
   tft.setSPISpeed(40000000);  // se a imagem sair com ruido, baixe para 20000000
-  tft.setRotation(2);         // ajuste 0..3 conforme a orientacao do seu modulo
+  tft.setRotation(1);         // ajuste 0..3 conforme a orientacao do seu modulo
   tft.fillScreen(C_FACE);
 
 #if BOOT_DEMO
