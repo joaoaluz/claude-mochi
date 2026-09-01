@@ -28,8 +28,11 @@
 #include <Adafruit_ST7789.h>
 #include <SPI.h>
 
+// ESP8266WiFi.h entra nos DOIS modos: no modo serial o setup() ainda chama
+// WiFi.mode(WIFI_OFF) / forceSleepBegin() para desligar o radio.
+#include <ESP8266WiFi.h>
+
 #if LINK_WIFI
-  #include <ESP8266WiFi.h>
   #include <ESP8266WebServer.h>
   #include <ESP8266mDNS.h>
   #include "config.h"      // copie de config.example.h (so precisa no modo Wi-Fi)
