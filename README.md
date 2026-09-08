@@ -65,7 +65,7 @@ O firmware suporta as duas. Escolha no topo do `.ino` (`LINK_SERIAL` /
 ### Serial pelo USB — **padrão e recomendado**
 
 ```
-Claude Code ──stdin──▶ statusline ──escreve arquivo──▶ mochi-serial.py ──USB──▶ ESP8266
+Claude Code ──stdin──▶ statusline ──escreve arquivo──▶ ponte (mochi.py) ──USB──▶ ESP8266
                        (nunca toca                     (abre a porta UMA vez,
                         na porta serial)                reenvia a cada 5 s)
 ```
@@ -238,41 +238,125 @@ Dá para testar à mão pelo Monitor Serial da Arduino IDE antes de montar o res
 
 ## Lado do PC
 
-```bash
-cp host/statusline-mochi.sh ~/.claude/statusline-mochi.sh
-cp host/mochi-mode.sh       ~/.claude/mochi-mode.sh
-chmod +x ~/.claude/statusline-mochi.sh ~/.claude/mochi-mode.sh
-```
+Dois caminhos para o mesmo resultado:
 
-Copie o bloco `statusLine` (e os `hooks`, se quiser) de
-`host/settings.example.json` para o seu `~/.claude/settings.json`.
+| | Quando usar | Precisa de |
+|---|---|---|
+| **`host/mochi.py`** | Windows, macOS, Linux. **Único que funciona no Windows.** | Python + `pyserial` |
+| `host/*.sh` | Só se você já tem os scripts bash rodando no Linux/macOS | `bash`, `jq`, `curl` |
 
-Os hooks fazem o mochi piscar mais rápido enquanto o Claude trabalha e virar os
-olhos de tonto durante a compactação — a status line sozinha não distingue esses
-estados.
+O `mochi.py` faz sozinho o que antes eram três arquivos: status line, hooks e
+ponte serial. Ele não usa `bash` nem `jq` de propósito — no Windows nenhum dos
+dois existe por padrão, e a status line do Claude Code lá é executada pelo Git
+Bash (quando instalado) ou pelo PowerShell.
 
-Requer `jq` (e `curl`, só no modo http).
-
-### Modo serial: subindo a ponte
+### Windows + Claude Desktop — plugou, funcionou
 
 ```bash
 pip install pyserial
-./host/mochi-serial.py            # detecta a porta sozinho (CH340/CP2102/FT232)
-./host/mochi-serial.py --port /dev/ttyUSB0 -v
-./host/mochi-serial.py --port COM3          # Windows
+python host/mochi.py install
 ```
 
-No Linux, se der erro de permissão: `sudo usermod -aG dialout $USER` e
+E reinicie o Claude Desktop. Só isso.
+
+O `install`:
+
+- copia o `mochi.py` para `~/.claude/`;
+- faz backup do seu `settings.json` (`settings.json.bak-mochi`);
+- escreve a `statusLine` e os hooks, **preservando** o que já estava lá;
+- sobe a ponte serial.
+
+Rodar de novo é seguro — ele troca a própria configuração em vez de duplicar.
+
+A partir daí não há passo manual nenhum: **a status line sobe a ponte sozinha**
+quando percebe que não tem nenhuma viva. Abrir o notebook, plugar o mochi e
+abrir o Claude já basta. Sem systemd, sem Agendador de Tarefas.
+
+Para conferir tudo de uma vez:
+
+```bash
+python host/mochi.py doctor
+```
+
+Ele mostra as portas com uma nota cada, qual foi escolhida, se a ponte está
+viva, o que a status line publicou por último e se o `settings.json` está
+apontando para o mochi.
+
+### Achando a placa
+
+`mochi.py ports` dá uma nota para cada porta em vez de chutar:
+
+```
+ nota  porta    descricao                              motivo
+  100  COM5     USB-SERIAL CH340 (COM5)                adaptador conhecido: CH340
+ -100  COM3     Standard Serial over Bluetooth link    ignorada (bluetooth)
+```
+
+Isso importa mais do que parece: num Windows típico a maioria das portas COM é
+Bluetooth — a máquina onde isto foi testado tinha oito. A escolha combina
+VID:PID conhecido (CH340, CH9102, CP2102, FT232, ESP32 nativo…), descrição, e
+uma lista de exclusão para portas virtuais.
+
+Quando sobra mais de uma candidata forte, a ponte **pergunta para cada uma**:
+manda uma linha e vê quem responde `ok`. Duas placas ligadas juntas deixaram de
+ser um impasse.
+
+A ponte também redescobre a porta a cada reconexão e guarda a última que
+funcionou em `~/.claude/mochi-port`. Trocar o cabo de entrada USB (COM5 → COM7)
+se resolve sozinho, sem reiniciar nada.
+
+Para forçar: `--port COM7` ou a variável `MOCHI_PORT`.
+
+### Comandos
+
+```bash
+python host/mochi.py doctor            # diagnóstico completo
+python host/mochi.py ports             # portas e a nota de cada uma
+python host/mochi.py start | stop | restart
+python host/mochi.py bridge -v         # ponte em primeiro plano, com log
+python host/mochi.py send "ctx=50 win=80 state=busy"   # teste direto
+python host/mochi.py uninstall         # tira do settings.json
+```
+
+Log da ponte de fundo: `~/.claude/mochi-bridge.log`.
+
+### Uma ponte de cada vez
+
+Só um processo pode segurar a porta serial. Se aparecer *"a porta está ocupada"*,
+o culpado é quase sempre:
+
+1. **outra ponte já rodando — inclusive dentro do WSL.** Uma ponte no WSL e outra
+   no Windows disputando a mesma COM é o erro mais comum de quem migrou. Use
+   `mochi.py stop`, ou encerre a do WSL.
+2. o Monitor Serial da Arduino IDE aberto.
+
+A ponte se recusa a subir se já houver outra viva, e a mensagem de erro diz
+exatamente isso em vez de mostrar um `PermissionError` cru.
+
+### Linux e macOS
+
+O `mochi.py` funciona igual (`python3 host/mochi.py install`). Se preferir os
+scripts bash antigos, eles continuam válidos:
+
+```bash
+cp host/statusline-mochi.sh host/mochi-mode.sh ~/.claude/
+chmod +x ~/.claude/statusline-mochi.sh ~/.claude/mochi-mode.sh
+```
+
+e copie o bloco `statusLine`/`hooks` de `host/settings.example.json`.
+
+No Linux, se der erro de permissão na porta: `sudo usermod -aG dialout $USER` e
 reconecte a sessão.
 
-Para deixar rodando sozinho — systemd de usuário (Linux):
+Para deixar a ponte rodando como serviço em vez de contar com o autostart —
+systemd de usuário:
 
 ```ini
 # ~/.config/systemd/user/mochi.service
 [Unit]
 Description=claude-mochi serial bridge
 [Service]
-ExecStart=%h/.claude/mochi-serial.py
+ExecStart=%h/.claude/mochi.py bridge
 Restart=always
 RestartSec=3
 [Install]
@@ -280,12 +364,20 @@ WantedBy=default.target
 ```
 
 ```bash
-cp host/mochi-serial.py ~/.claude/ && chmod +x ~/.claude/mochi-serial.py
 systemctl --user daemon-reload && systemctl --user enable --now mochi
 ```
 
-No macOS, o equivalente é um `launchd` plist em `~/Library/LaunchAgents/`.
-Para só testar, `nohup ./host/mochi-serial.py &` resolve.
+No macOS o equivalente é um `launchd` plist em `~/Library/LaunchAgents/`.
+
+### Variáveis de ambiente
+
+| Variável | Padrão | Para quê |
+|---|---|---|
+| `MOCHI_PORT` | autodetect | força a porta serial |
+| `MOCHI_LINK` | `serial` | `serial`, `http` ou `both` |
+| `MOCHI_HOST` | `mochi.local` | destino no modo http |
+| `MOCHI_AUTOSTART` | `1` | `0` desliga o autostart da ponte |
+| `MOCHI_STATE_FILE` / `MOCHI_MODE_FILE` | `~/.claude/mochi-*` | onde ficam os arquivos de estado |
 
 ### Modo Wi-Fi
 
@@ -295,6 +387,13 @@ export MOCHI_HOST=mochi.local     # ou o IP, se o mDNS não funcionar na sua red
 ```
 
 Nesse modo não precisa da ponte: a status line fala direto com o ESP.
+
+### Skill: instalar em outra máquina
+
+O repositório traz uma skill em `.claude/skills/claude-mochi/`. Com o
+repositório clonado, plugue o mochi e peça ao Claude *"instala o mochi aqui"* —
+ela cobre instalação, diagnóstico e os erros comuns (porta ocupada, driver
+CH340 faltando, cabo só de carga, status line que não aparece no Windows).
 
 ---
 

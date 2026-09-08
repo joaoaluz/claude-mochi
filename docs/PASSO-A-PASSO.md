@@ -233,6 +233,10 @@ diferentes, e o mochi cochila sozinho depois de 30 s.
 
 ### 5.1 Instale os scripts do lado do PC
 
+> **No Windows (ou com o Claude Desktop), pule esta parte.** Estes scripts
+> precisam de `bash` e `jq`, que o Windows nao tem. La use um comando so:
+> `python host/mochi.py install`. Detalhes na secao "Lado do PC" do README.
+
 ```bash
 cp host/statusline-mochi.sh ~/.claude/statusline-mochi.sh
 cp host/mochi-mode.sh       ~/.claude/mochi-mode.sh

@@ -12,4 +12,4 @@ __pycache__/
 *.pyc
 
 # Metadado que o Windows gruda em arquivo baixado
-*:Zone.Identifier
+*Zone.Identifier
