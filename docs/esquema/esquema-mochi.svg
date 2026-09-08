@@ -1,0 +1,149 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1180 1560" width="1180" height="1560" font-family="ui-sans-serif, system-ui, -apple-system, Segoe UI, Helvetica, Arial, sans-serif">
+<rect width="1180" height="1560" fill="#14110f"/>
+<text x="60" y="72" fill="#f4f1ea" font-size="34" font-weight="700">claude-mochi — ligacoes na protoboard</text>
+<text x="60" y="102" fill="#8b857c" font-size="15">ESP8266 + ST7789 240×240 · 7 fios (8 com CS) · sem PCB, sem solda no circuito · espelha docs/PROTOBOARD.md</text>
+<line x1="60" y1="124" x2="1120" y2="124" stroke="#2b2722" stroke-width="1"/>
+<text x="60" y="168" fill="#d97757" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="13" letter-spacing="2">01</text>
+<text x="60" y="194" fill="#f4f1ea" font-size="21" font-weight="600">Quem vai em quem</text>
+<text x="60" y="216" fill="#8b857c" font-size="14">os dois lados sao 3,3 V — nao entra resistor em lugar nenhum</text>
+<rect x="130" y="248" width="250" height="372" rx="10" fill="#1c1815" stroke="#3a342e" stroke-width="2"/>
+<text x="255.0" y="282" text-anchor="middle" fill="#f4f1ea" font-size="16" font-weight="600">ESP8266</text>
+<text x="255.0" y="304" text-anchor="middle" fill="#8b857c" font-size="12.5">NodeMCU ou Wemos D1 mini</text>
+<text x="255.0" y="326" text-anchor="middle" fill="#8b857c" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="12">espetado na protoboard</text>
+<rect x="229.0" y="586" width="52" height="22" rx="4" fill="#2a2521" stroke="#3a342e" stroke-width="1.5"/>
+<text x="255.0" y="602" text-anchor="middle" fill="#8b857c" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="10">USB</text>
+<rect x="790" y="248" width="260" height="372" rx="10" fill="#1c1815" stroke="#3a342e" stroke-width="2"/>
+<rect x="860" y="306" width="170" height="170" rx="6" fill="#000" stroke="#3a342e" stroke-width="1.5"/>
+<ellipse cx="916" cy="380" rx="21" ry="24" fill="#f4f1ea"/>
+<ellipse cx="916" cy="380" rx="11" ry="13" fill="#2e8b57"/>
+<ellipse cx="974" cy="380" rx="21" ry="24" fill="#f4f1ea"/>
+<ellipse cx="974" cy="380" rx="11" ry="13" fill="#2e8b57"/>
+<rect x="884" y="452" width="122" height="7" rx="3" fill="#2e8b57"/>
+<text x="955.0" y="282" text-anchor="middle" fill="#f4f1ea" font-size="16" font-weight="600">ST7789 240×240</text>
+<text x="955.0" y="604" text-anchor="middle" fill="#d97757" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="11.5">este vai dentro do mochi</text>
+<line x1="130" y1="672" x2="1050" y2="672" stroke="#d93b3b" stroke-width="3.5" stroke-linecap="round"/>
+<text x="116" y="677" text-anchor="end" fill="#d93b3b" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="16" font-weight="700">+</text>
+<text x="1062" y="677" fill="#8b857c" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="11.5">trilha + da protoboard  ·  3,3 V</text>
+<line x1="130" y1="704" x2="1050" y2="704" stroke="#8b857c" stroke-width="3.5" stroke-linecap="round"/>
+<text x="116" y="709" text-anchor="end" fill="#8b857c" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="16" font-weight="700">−</text>
+<text x="1062" y="709" fill="#8b857c" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="11.5">trilha − da protoboard  ·  GND</text>
+<rect x="374" y="338" width="12" height="12" rx="2.5" fill="#e8b93a"/>
+<text x="364" y="349" text-anchor="end" fill="#f4f1ea" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="13.5">D5</text>
+<rect x="784" y="308" width="12" height="12" rx="2.5" fill="#e8b93a"/>
+<text x="806" y="319" text-anchor="start" fill="#f4f1ea" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="13.5">SCL</text>
+<path d="M 386 344 C 565.1 344, 604.9 314, 784 314" fill="none" stroke="#e8b93a" stroke-width="3" stroke-linecap="round"/>
+<text x="585.0" y="321.0" text-anchor="middle" fill="#8b857c" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="11">GPIO14</text>
+<rect x="374" y="372" width="12" height="12" rx="2.5" fill="#4a90d9"/>
+<text x="364" y="383" text-anchor="end" fill="#f4f1ea" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="13.5">D7</text>
+<rect x="784" y="342" width="12" height="12" rx="2.5" fill="#4a90d9"/>
+<text x="806" y="353" text-anchor="start" fill="#f4f1ea" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="13.5">SDA</text>
+<path d="M 386 378 C 565.1 378, 604.9 348, 784 348" fill="none" stroke="#4a90d9" stroke-width="3" stroke-linecap="round"/>
+<text x="585.0" y="355.0" text-anchor="middle" fill="#8b857c" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="11">GPIO13</text>
+<rect x="374" y="406" width="12" height="12" rx="2.5" fill="#e8e4dc"/>
+<text x="364" y="417" text-anchor="end" fill="#f4f1ea" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="13.5">D2</text>
+<rect x="784" y="376" width="12" height="12" rx="2.5" fill="#e8e4dc"/>
+<text x="806" y="387" text-anchor="start" fill="#f4f1ea" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="13.5">RES</text>
+<path d="M 386 412 C 565.1 412, 604.9 382, 784 382" fill="none" stroke="#e8e4dc" stroke-width="3" stroke-linecap="round"/>
+<text x="585.0" y="389.0" text-anchor="middle" fill="#8b857c" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="11">GPIO4</text>
+<rect x="374" y="440" width="12" height="12" rx="2.5" fill="#4caf6d"/>
+<text x="364" y="451" text-anchor="end" fill="#f4f1ea" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="13.5">D1</text>
+<rect x="784" y="410" width="12" height="12" rx="2.5" fill="#4caf6d"/>
+<text x="806" y="421" text-anchor="start" fill="#f4f1ea" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="13.5">DC</text>
+<path d="M 386 446 C 565.1 446, 604.9 416, 784 416" fill="none" stroke="#4caf6d" stroke-width="3" stroke-linecap="round"/>
+<text x="585.0" y="423.0" text-anchor="middle" fill="#8b857c" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="11">GPIO5</text>
+<rect x="374" y="474" width="12" height="12" rx="2.5" fill="#a97bd4"/>
+<text x="364" y="485" text-anchor="end" fill="#f4f1ea" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="13.5">D8</text>
+<rect x="784" y="444" width="12" height="12" rx="2.5" fill="#a97bd4"/>
+<text x="806" y="455" text-anchor="start" fill="#f4f1ea" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="13.5">CS</text>
+<path d="M 386 480 C 565.1 480, 604.9 450, 784 450" fill="none" stroke="#a97bd4" stroke-width="3" stroke-dasharray="7 6" stroke-linecap="round"/>
+<text x="585.0" y="457.0" text-anchor="middle" fill="#8b857c" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="11">GPIO15</text>
+<rect x="374" y="522" width="12" height="12" rx="2.5" fill="#d93b3b"/>
+<text x="364" y="533" text-anchor="end" fill="#f4f1ea" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="13.5">3V3</text>
+<rect x="374" y="556" width="12" height="12" rx="2.5" fill="#8b857c"/>
+<text x="364" y="567" text-anchor="end" fill="#f4f1ea" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="13.5">GND</text>
+<path d="M 386 528 C 446 528, 370 672, 430 672" fill="none" stroke="#d93b3b" stroke-width="3" stroke-linecap="round"/>
+<path d="M 386 562 C 446 562, 410 704, 470 704" fill="none" stroke="#8b857c" stroke-width="3" stroke-linecap="round"/>
+<rect x="784" y="492" width="12" height="12" rx="2.5" fill="#d93b3b"/>
+<text x="806" y="503" text-anchor="start" fill="#f4f1ea" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="13.5">VCC</text>
+<path d="M 670 672 C 740 672, 710 498, 784 498" fill="none" stroke="#d93b3b" stroke-width="3" stroke-linecap="round"/>
+<circle cx="670" cy="672" r="4.5" fill="#d93b3b"/>
+<rect x="784" y="526" width="12" height="12" rx="2.5" fill="#d97757"/>
+<text x="806" y="537" text-anchor="start" fill="#f4f1ea" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="13.5">BLK</text>
+<path d="M 624 672 C 694 672, 710 532, 784 532" fill="none" stroke="#d97757" stroke-width="3" stroke-linecap="round"/>
+<circle cx="624" cy="672" r="4.5" fill="#d97757"/>
+<rect x="784" y="560" width="12" height="12" rx="2.5" fill="#8b857c"/>
+<text x="806" y="571" text-anchor="start" fill="#f4f1ea" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="13.5">GND</text>
+<path d="M 578 704 C 648 704, 710 566, 784 566" fill="none" stroke="#8b857c" stroke-width="3" stroke-linecap="round"/>
+<circle cx="578" cy="704" r="4.5" fill="#8b857c"/>
+<text x="130" y="750" fill="#8b857c" font-size="13">VCC e BLK saem os dois da trilha +. Sem CS, sao 7 fios.</text>
+<text x="60" y="800" fill="#d97757" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="13" letter-spacing="2">02</text>
+<text x="60" y="826" fill="#f4f1ea" font-size="21" font-weight="600">A tabela, fio por fio</text>
+<text x="60" y="848" fill="#8b857c" font-size="14">confira a linha VCC duas vezes antes de energizar</text>
+<line x1="60" y1="884" x2="1120" y2="884" stroke="#2b2722"/>
+<text x="84" y="874" fill="#8b857c" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="11.5" letter-spacing="1.5">DISPLAY</text>
+<text x="250" y="874" fill="#8b857c" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="11.5" letter-spacing="1.5">ESP8266</text>
+<text x="400" y="874" fill="#8b857c" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="11.5" letter-spacing="1.5">GPIO</text>
+<text x="560" y="874" fill="#8b857c" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="11.5" letter-spacing="1.5">OBSERVACAO</text>
+<rect x="60" y="887" width="1060" height="30" fill="#1a1714"/>
+<rect x="64" y="895" width="10" height="14" rx="2" fill="#e8b93a"/>
+<text x="84" y="906" fill="#f4f1ea" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="14">SCL</text>
+<text x="250" y="906" fill="#f4f1ea" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="14">D5</text>
+<text x="400" y="906" fill="#8b857c" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="13">GPIO14</text>
+<text x="560" y="906" fill="#8b857c" font-size="13">SPI por hardware — pino fixo</text>
+<rect x="64" y="925" width="10" height="14" rx="2" fill="#4a90d9"/>
+<text x="84" y="936" fill="#f4f1ea" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="14">SDA</text>
+<text x="250" y="936" fill="#f4f1ea" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="14">D7</text>
+<text x="400" y="936" fill="#8b857c" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="13">GPIO13</text>
+<text x="560" y="936" fill="#8b857c" font-size="13">SPI por hardware — pino fixo</text>
+<rect x="60" y="947" width="1060" height="30" fill="#1a1714"/>
+<rect x="64" y="955" width="10" height="14" rx="2" fill="#e8e4dc"/>
+<text x="84" y="966" fill="#f4f1ea" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="14">RES</text>
+<text x="250" y="966" fill="#f4f1ea" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="14">D2</text>
+<text x="400" y="966" fill="#8b857c" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="13">GPIO4</text>
+<text x="560" y="966" fill="#8b857c" font-size="13">TFT_RST no .ino</text>
+<rect x="64" y="985" width="10" height="14" rx="2" fill="#4caf6d"/>
+<text x="84" y="996" fill="#f4f1ea" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="14">DC</text>
+<text x="250" y="996" fill="#f4f1ea" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="14">D1</text>
+<text x="400" y="996" fill="#8b857c" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="13">GPIO5</text>
+<text x="560" y="996" fill="#8b857c" font-size="13">TFT_DC no .ino</text>
+<rect x="60" y="1007" width="1060" height="30" fill="#1a1714"/>
+<rect x="64" y="1015" width="10" height="14" rx="2" fill="#a97bd4"/>
+<text x="84" y="1026" fill="#f4f1ea" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="14">CS</text>
+<text x="250" y="1026" fill="#f4f1ea" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="14">D8</text>
+<text x="400" y="1026" fill="#8b857c" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="13">GPIO15</text>
+<text x="560" y="1026" fill="#8b857c" font-size="13">so se o modulo tiver CS</text>
+<rect x="64" y="1045" width="10" height="14" rx="2" fill="#d93b3b"/>
+<text x="84" y="1056" fill="#f4f1ea" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="14">VCC</text>
+<text x="250" y="1056" fill="#f4f1ea" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="14">3V3</text>
+<text x="400" y="1056" fill="#8b857c" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="13">trilha +</text>
+<text x="560" y="1056" fill="#8b857c" font-size="13">NUNCA 5 V / VIN</text>
+<rect x="60" y="1067" width="1060" height="30" fill="#1a1714"/>
+<rect x="64" y="1075" width="10" height="14" rx="2" fill="#d97757"/>
+<text x="84" y="1086" fill="#f4f1ea" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="14">BLK</text>
+<text x="250" y="1086" fill="#f4f1ea" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="14">3V3</text>
+<text x="400" y="1086" fill="#8b857c" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="13">trilha +</text>
+<text x="560" y="1086" fill="#8b857c" font-size="13">backlight sempre aceso</text>
+<rect x="64" y="1105" width="10" height="14" rx="2" fill="#8b857c"/>
+<text x="84" y="1116" fill="#f4f1ea" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="14">GND</text>
+<text x="250" y="1116" fill="#f4f1ea" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="14">GND</text>
+<text x="400" y="1116" fill="#8b857c" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="13">trilha −</text>
+<text x="560" y="1116" fill="#8b857c" font-size="13"></text>
+<text x="60" y="1190" fill="#d97757" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="13" letter-spacing="2">03</text>
+<text x="60" y="1216" fill="#f4f1ea" font-size="21" font-weight="600">Tres coisas que queimam ou enganam</text>
+<text x="60" y="1238" fill="#8b857c" font-size="14"></text>
+<circle cx="68" cy="1229" r="3.5" fill="#d97757"/>
+<text x="86" y="1234" fill="#f4f1ea" font-size="14.5" font-weight="600">VCC so em 3V3</text>
+<text x="86" y="1255" fill="#8b857c" font-size="13.5">5 V ou VIN queima o display. Os dois lados sao 3,3 V.</text>
+<circle cx="68" cy="1283" r="3.5" fill="#d97757"/>
+<text x="86" y="1288" fill="#f4f1ea" font-size="14.5" font-weight="600">A ordem dos pinos varia</text>
+<text x="86" y="1309" fill="#8b857c" font-size="13.5">Cada modulo ST7789 imprime os pinos numa ordem. Va pelo NOME na serigrafia, nunca pela posicao</text>
+<text x="86" y="1328" fill="#8b857c" font-size="13.5">deste desenho.</text>
+<circle cx="68" cy="1356" r="3.5" fill="#d97757"/>
+<text x="86" y="1361" fill="#f4f1ea" font-size="14.5" font-weight="600">Sem CS no seu modulo?</text>
+<text x="86" y="1382" fill="#8b857c" font-size="13.5">Deixe o fio roxo de fora e troque no .ino: #define TFT_CS -1</text>
+<circle cx="68" cy="1410" r="3.5" fill="#d97757"/>
+<text x="86" y="1415" fill="#f4f1ea" font-size="14.5" font-weight="600">Fio curto</text>
+<text x="86" y="1436" fill="#8b857c" font-size="13.5">O SPI roda a 40 MHz. Jumper longo vira listra na tela — se acontecer, baixe setSPISpeed para</text>
+<text x="86" y="1455" fill="#8b857c" font-size="13.5">20000000.</text>
+<text x="60" y="1530" fill="#5c564e" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="11">gerado por docs/esquema/gera_svg.py — nao edite o SVG a mao</text>
+</svg>

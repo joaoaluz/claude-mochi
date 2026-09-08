@@ -1,4 +1,6 @@
 // claude-mochi — olhos que indicam o consumo de tokens do Claude Code.
+// Por padrao os olhos E a barra seguem o LIMITE DE 5 HORAS.
+// Troque em OLHOS_METRICA / BARRA_METRICA.
 //
 // Placa   : ESP8266 (NodeMCU / Wemos D1 mini / ESP-12)
 // Display : ST7789 1.54" 240x240 SPI (modulo de 7 pinos, com CS)
@@ -28,8 +30,11 @@
 #include <Adafruit_ST7789.h>
 #include <SPI.h>
 
+// ESP8266WiFi.h entra nos DOIS modos: no modo serial o setup() ainda chama
+// WiFi.mode(WIFI_OFF) / forceSleepBegin() para desligar o radio.
+#include <ESP8266WiFi.h>
+
 #if LINK_WIFI
-  #include <ESP8266WiFi.h>
   #include <ESP8266WebServer.h>
   #include <ESP8266mDNS.h>
   #include "config.h"      // copie de config.example.h (so precisa no modo Wi-Fi)
@@ -63,22 +68,29 @@
 Adafruit_ST7789 tft = Adafruit_ST7789(TFT_CS, TFT_DC, TFT_RST);
 
 // ------------------------------------------------------------------ cores ---
-static const uint16_t C_FACE   = 0xF71C;  // creme, o "rosto" do mochi
+static const uint16_t C_FACE   = 0xFB26;  // laranja forte, o "rosto" do mochi (#FF6633)
+// Matiz do clay da Anthropic (#D97757, H 15) mas com saturacao 100%. O clay
+// puro tem so 63% de saturacao e sai lavado num painel retroiluminado.
+// Outras opcoes do mesmo matiz: 0xFAE3 (#FF5E1A, mais forte),
+// 0xFB63 (#FF6E1A, mais amarelado), 0xDBAA (#D97757, o clay original).
 static const uint16_t C_EYE    = 0x18E3;  // quase preto
 static const uint16_t C_OK     = 0x2E88;  // verde
 static const uint16_t C_WARN   = 0xFCA0;  // ambar
 static const uint16_t C_HOT    = 0xE0A3;  // vermelho
 static const uint16_t C_SHINE  = 0xFFFF;  // brilho do olho
-static const uint16_t C_TRACK  = 0xE71C;  // trilho da barra
+static const uint16_t C_TRACK  = 0x8A44;  // trilho da barra, laranja escuro (#8A4A22)
 static const uint16_t C_SLEEP  = 0xD69A;  // olhos "dormindo" (sem dados)
 
 // --------------------------------------------------------------- geometria ---
 static const int16_t SCR       = 240;
-static const int16_t EYE_CX_L  = 78;
-static const int16_t EYE_CX_R  = 162;
+static const int16_t EYE_CX_L  = 72;
+static const int16_t EYE_CX_R  = 168;
 static const int16_t EYE_CY    = 104;
-static const int16_t EYE_RX    = 30;   // meia-largura do olho
-static const int16_t EYE_RY    = 34;   // meia-altura maxima do olho
+static const int16_t EYE_RX    = 36;   // meia-largura do olho
+static const int16_t EYE_RY    = 42;   // meia-altura maxima do olho
+// A area que drawEye limpa e (EYE_RX+4)*2 por (EYE_RY+4)*2. Com os valores
+// acima isso ocupa x 32..112 e 128..208, e y 58..150 — sem invadir a borda
+// nem a barra (y 206). Se aumentar mais, confira essas contas antes.
 static const int16_t BAR_Y     = 206;
 static const int16_t BAR_H     = 10;
 static const int16_t BAR_X     = 34;
@@ -97,13 +109,41 @@ struct State {
   bool  everPinged = false;
 } st;
 
+// -------------------------------------------------- o que a tela esta medindo ---
+// Cada elemento escolhe sua metrica, de forma independente:
+//   1 -> limite de 5 horas (st.win)
+//   0 -> janela de contexto (st.ctx)
+//
+// Padrao: os DOIS no limite de 5h. Olhos e barra concordam sempre na cor, e a
+// barra da o numero exato que a abertura da palpebra so sugere. A janela de
+// contexto deixa de aparecer na tela — o firmware ainda aceita "ctx=" no
+// protocolo, so nao desenha nada com ele.
+//
+// O limite de 5h anda MUITO mais devagar que o contexto e zera a cada janela,
+// entao o mochi fica bem menos agitado assim. E de proposito: ele mede quanto
+// da sua cota ja foi, nao quanto o chat cresceu.
+#define OLHOS_METRICA 1
+#define BARRA_METRICA 1
+
+#if OLHOS_METRICA
+  #define VAL_OLHOS (st.win)
+#else
+  #define VAL_OLHOS (st.ctx)
+#endif
+
+#if BARRA_METRICA
+  #define VAL_BARRA (st.win)
+#else
+  #define VAL_BARRA (st.ctx)
+#endif
+
 static float  openNow    = 1.0f;   // abertura atual da palpebra (animada)
 static float  openTarget = 1.0f;
 static bool   blinking   = false;
 static unsigned long blinkUntil = 0;
 static unsigned long nextBlink  = 0;
-static int    lastDrawnCtx = -1;
-static int    lastDrawnWin = -1;
+static int    lastDrawnOlhos = -1;
+static int    lastDrawnBarra = -1;
 static int    lastEyeH     = -1;
 static bool   lastCrossed  = false;
 static bool   lastAsleep   = false;
@@ -146,9 +186,9 @@ static void fillEllipse(int16_t cx, int16_t cy, int16_t rx, int16_t ry, uint16_t
   }
 }
 
-// Olho "tonto": um X, para contexto quase estourado ou compactacao.
+// Olho "tonto": um X, para a metrica dos olhos estourando ou compactacao.
 static void drawCrossEye(int16_t cx, int16_t cy, uint16_t color) {
-  const int16_t r = 22;
+  const int16_t r = 28;
   for (int16_t o = -2; o <= 2; o++) {
     tft.drawLine(cx - r, cy - r + o, cx + r, cy + r + o, color);
     tft.drawLine(cx - r, cy + r + o, cx + r, cy - r + o, color);
@@ -182,7 +222,7 @@ static void drawEye(int16_t cx, int16_t cy, int16_t ry, uint16_t iris,
   if (iry >= 2) fillEllipse(cx, cy, irx, iry, iris);
 
   if (ry > EYE_RY * 0.45f) {
-    tft.fillCircle(cx - EYE_RX / 3, cy - ry / 2, 4, C_SHINE);
+    tft.fillCircle(cx - EYE_RX / 3, cy - ry / 2, 5, C_SHINE);
   }
 }
 
@@ -347,7 +387,7 @@ void setup() {
 
   tft.init(240, 240);
   tft.setSPISpeed(40000000);  // se a imagem sair com ruido, baixe para 20000000
-  tft.setRotation(2);         // ajuste 0..3 conforme a orientacao do seu modulo
+  tft.setRotation(1);         // ajuste 0..3 conforme a orientacao do seu modulo
   tft.fillScreen(C_FACE);
 
 #if BOOT_DEMO
@@ -395,30 +435,31 @@ void loop() {
     nextBlink = now + (busy ? random(900, 2000) : random(2800, 6000));
   }
 
-  // Alvo de abertura: 0% de contexto = arregalado, 100% = quase fechado.
-  openTarget = 1.0f - 0.72f * (st.ctx / 100.0f);
+  // Alvo de abertura: 0% = arregalado, 100% = quase fechado.
+  openTarget = 1.0f - 0.72f * (VAL_OLHOS / 100.0f);
   if (blinking) openTarget = 0.0f;
 
   // Suavizacao exponencial para a animacao nao ficar dura.
   openNow += (openTarget - openNow) * 0.28f;
 
-  const bool     crossed = (st.ctx >= 95) || (strcmp(st.mode, "compact") == 0);
+  // Olho de tonto: a metrica dos olhos estourando, ou uma compactacao em curso.
+  const bool     crossed = (VAL_OLHOS >= 95) || (strcmp(st.mode, "compact") == 0);
   const int16_t  eyeH    = (int16_t)(EYE_RY * openNow);
-  const uint16_t iris    = levelColor(st.ctx);
+  const uint16_t iris    = levelColor(VAL_OLHOS);
 
   if (eyeH != lastEyeH || crossed != lastCrossed ||
-      st.ctx != lastDrawnCtx || asleep != lastAsleep) {
+      VAL_OLHOS != lastDrawnOlhos || asleep != lastAsleep) {
     drawEye(EYE_CX_L, EYE_CY, eyeH, iris, crossed, asleep);
     drawEye(EYE_CX_R, EYE_CY, eyeH, iris, crossed, asleep);
-    lastEyeH     = eyeH;
-    lastCrossed  = crossed;
-    lastDrawnCtx = st.ctx;
-    lastAsleep   = asleep;
+    lastEyeH       = eyeH;
+    lastCrossed    = crossed;
+    lastDrawnOlhos = VAL_OLHOS;
+    lastAsleep     = asleep;
   }
 
-  if (st.win != lastDrawnWin) {
-    drawBar(st.win);
-    lastDrawnWin = st.win;
+  if (VAL_BARRA != lastDrawnBarra) {
+    drawBar(VAL_BARRA);
+    lastDrawnBarra = VAL_BARRA;
   }
 
   delay(16);  // ~60 fps

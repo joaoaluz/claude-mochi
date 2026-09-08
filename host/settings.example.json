@@ -1,4 +1,6 @@
 {
+  "_comentario_windows": "Este exemplo é para Linux/macOS (scripts bash, requer jq). No Windows — e com o Claude Desktop — NÃO copie este arquivo: rode 'python host/mochi.py install', que escreve a configuração certa sozinho (caminhos com barra normal, hooks em forma exec, sem depender de bash nem de jq).",
+
   "_comentario": "Cole o bloco statusLine no seu ~/.claude/settings.json. Se você já tem uma status line, apenas troque o command.",
   "statusLine": {
     "type": "command",

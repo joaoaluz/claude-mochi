@@ -10,3 +10,6 @@ build/
 # Python
 __pycache__/
 *.pyc
+
+# Metadado que o Windows gruda em arquivo baixado
+*Zone.Identifier
