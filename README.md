@@ -2,15 +2,17 @@
 
 Um mochi de mesa cujos **olhos indicam o consumo de tokens do Claude Code**.
 
-Quanto mais da sua cota de **5 horas** você gasta, mais os olhos se fecham e
+Quanto mais da **janela de contexto** você gasta, mais os olhos se fecham e
 mais quente fica a cor da íris — verde → âmbar → vermelho. A barrinha embaixo
 mostra o mesmo número, com precisão que a pálpebra só sugere. Passou de 95%
 (ou rodou `/compact`), o mochi fica de olhos tontos (`X_X`). Sem notícias do
 PC por 30 s, ele cochila.
 
 Olhos e barra escolhem a métrica de forma independente, em `OLHOS_METRICA` e
-`BARRA_METRICA` no `.ino`: qualquer um dos dois pode apontar para a janela de
-contexto em vez do limite de 5 horas.
+`BARRA_METRICA` no `.ino`: qualquer um dos dois pode apontar para o limite de
+5 horas em vez da janela de contexto. O contexto é o padrão porque é o único
+que anda no Claude Desktop, que não desenha status line — veja
+[Duas fontes](#duas-fontes-a-status-line-e-os-hooks).
 
 Inspirado no [clawd-mochi](https://github.com/yousifamanuel/clawd-mochi) do
 Yousif Amanuel — mesma ideia de hardware, mas ligado ao Claude Code em vez de

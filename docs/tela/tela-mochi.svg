@@ -5,7 +5,7 @@
 <line x1="60" y1="124" x2="1120" y2="124" stroke="#2b2722" stroke-width="1"/>
 <text x="60" y="168" fill="#d97757" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="13" letter-spacing="2">01</text>
 <text x="60" y="194" fill="#f4f1ea" font-family="ui-sans-serif, system-ui, -apple-system, Segoe UI, Helvetica, Arial, sans-serif" font-size="21" font-weight="600">Consumo de contexto → abertura do olho</text>
-<text x="60" y="216" fill="#8b857c" font-family="ui-sans-serif, system-ui, -apple-system, Segoe UI, Helvetica, Arial, sans-serif" font-size="14">openTarget = 1 − 0,72 × ctx/100 · a íris vai de verde a vermelho · a barra de baixo é o limite de 5 h</text>
+<text x="60" y="216" fill="#8b857c" font-family="ui-sans-serif, system-ui, -apple-system, Segoe UI, Helvetica, Arial, sans-serif" font-size="14">openTarget = 1 − 0,72 × ctx/100 · a íris vai de verde a vermelho · a barra de baixo repete o mesmo número</text>
 <g transform="translate(60.0,248) scale(0.8)">
 <rect x="-6" y="-6" width="252" height="252" rx="14" fill="#000" stroke="#3a342e" stroke-width="2"/>
 <rect width="240" height="240" fill="#f7e3e7"/>
@@ -16,12 +16,11 @@
 <ellipse cx="162" cy="104" rx="16" ry="18" fill="#29d342"/>
 <circle cx="152" cy="87" r="4" fill="#ffffff"/>
 <rect x="34" y="206" width="172" height="10" rx="5" fill="#e7e3e7"/>
-<rect x="34" y="206" width="13" height="10" rx="5" fill="#42cb39"/>
 </g>
 <text x="156.0" y="470.0" text-anchor="middle" fill="#f4f1ea" font-family="ui-sans-serif, system-ui, -apple-system, Segoe UI, Helvetica, Arial, sans-serif" font-size="15" font-weight="600">ctx 0%</text>
 <text x="156.0" y="490.0" text-anchor="middle" fill="#8b857c" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="12.5">olho 34px de 34</text>
 <text x="156.0" y="507.0" text-anchor="middle" fill="#8b857c" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="12.5">íris #29d342</text>
-<text x="156.0" y="524.0" text-anchor="middle" fill="#8b857c" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="12.5">barra 5h 8%</text>
+<text x="156.0" y="524.0" text-anchor="middle" fill="#8b857c" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="12.5">barra 0%</text>
 <g transform="translate(276.0,248) scale(0.8)">
 <rect x="-6" y="-6" width="252" height="252" rx="14" fill="#000" stroke="#3a342e" stroke-width="2"/>
 <rect width="240" height="240" fill="#f7e3e7"/>
@@ -32,12 +31,12 @@
 <ellipse cx="162" cy="104" rx="16" ry="14" fill="#94b621"/>
 <circle cx="152" cy="91" r="4" fill="#ffffff"/>
 <rect x="34" y="206" width="172" height="10" rx="5" fill="#e7e3e7"/>
-<rect x="34" y="206" width="48" height="10" rx="5" fill="#8cb629"/>
+<rect x="34" y="206" width="51" height="10" rx="5" fill="#94b621"/>
 </g>
 <text x="372.0" y="470.0" text-anchor="middle" fill="#f4f1ea" font-family="ui-sans-serif, system-ui, -apple-system, Segoe UI, Helvetica, Arial, sans-serif" font-size="15" font-weight="600">ctx 30%</text>
 <text x="372.0" y="490.0" text-anchor="middle" fill="#8b857c" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="12.5">olho 26px de 34</text>
 <text x="372.0" y="507.0" text-anchor="middle" fill="#8b857c" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="12.5">íris #94b621</text>
-<text x="372.0" y="524.0" text-anchor="middle" fill="#8b857c" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="12.5">barra 5h 28%</text>
+<text x="372.0" y="524.0" text-anchor="middle" fill="#8b857c" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="12.5">barra 30%</text>
 <g transform="translate(492.0,248) scale(0.8)">
 <rect x="-6" y="-6" width="252" height="252" rx="14" fill="#000" stroke="#3a342e" stroke-width="2"/>
 <rect width="240" height="240" fill="#f7e3e7"/>
@@ -48,12 +47,12 @@
 <ellipse cx="162" cy="104" rx="16" ry="10" fill="#ff9600"/>
 <circle cx="152" cy="95" r="4" fill="#ffffff"/>
 <rect x="34" y="206" width="172" height="10" rx="5" fill="#e7e3e7"/>
-<rect x="34" y="206" width="77" height="10" rx="5" fill="#c6a610"/>
+<rect x="34" y="206" width="103" height="10" rx="5" fill="#ff9600"/>
 </g>
 <text x="588.0" y="470.0" text-anchor="middle" fill="#f4f1ea" font-family="ui-sans-serif, system-ui, -apple-system, Segoe UI, Helvetica, Arial, sans-serif" font-size="15" font-weight="600">ctx 60%</text>
 <text x="588.0" y="490.0" text-anchor="middle" fill="#8b857c" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="12.5">olho 19px de 34</text>
 <text x="588.0" y="507.0" text-anchor="middle" fill="#8b857c" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="12.5">íris #ff9600</text>
-<text x="588.0" y="524.0" text-anchor="middle" fill="#8b857c" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="12.5">barra 5h 45%</text>
+<text x="588.0" y="524.0" text-anchor="middle" fill="#8b857c" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="12.5">barra 60%</text>
 <g transform="translate(708.0,248) scale(0.8)">
 <rect x="-6" y="-6" width="252" height="252" rx="14" fill="#000" stroke="#3a342e" stroke-width="2"/>
 <rect width="240" height="240" fill="#f7e3e7"/>
@@ -62,12 +61,12 @@
 <ellipse cx="162" cy="104" rx="30" ry="13" fill="#181c18"/>
 <ellipse cx="162" cy="104" rx="16" ry="7" fill="#f74508"/>
 <rect x="34" y="206" width="172" height="10" rx="5" fill="#e7e3e7"/>
-<rect x="34" y="206" width="108" height="10" rx="5" fill="#ff8e00"/>
+<rect x="34" y="206" width="146" height="10" rx="5" fill="#f74508"/>
 </g>
 <text x="804.0" y="470.0" text-anchor="middle" fill="#f4f1ea" font-family="ui-sans-serif, system-ui, -apple-system, Segoe UI, Helvetica, Arial, sans-serif" font-size="15" font-weight="600">ctx 85%</text>
 <text x="804.0" y="490.0" text-anchor="middle" fill="#8b857c" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="12.5">olho 13px de 34</text>
 <text x="804.0" y="507.0" text-anchor="middle" fill="#8b857c" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="12.5">íris #f74508</text>
-<text x="804.0" y="524.0" text-anchor="middle" fill="#8b857c" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="12.5">barra 5h 63%</text>
+<text x="804.0" y="524.0" text-anchor="middle" fill="#8b857c" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="12.5">barra 85%</text>
 <g transform="translate(924.0,248) scale(0.8)">
 <rect x="-6" y="-6" width="252" height="252" rx="14" fill="#000" stroke="#d97757" stroke-width="2"/>
 <rect width="240" height="240" fill="#f7e3e7"/>
@@ -76,12 +75,12 @@
 <line x1="140" y1="82" x2="184" y2="126" stroke="#181c18" stroke-width="5" stroke-linecap="round"/>
 <line x1="140" y1="126" x2="184" y2="82" stroke="#181c18" stroke-width="5" stroke-linecap="round"/>
 <rect x="34" y="206" width="172" height="10" rx="5" fill="#e7e3e7"/>
-<rect x="34" y="206" width="151" height="10" rx="5" fill="#ef3c10"/>
+<rect x="34" y="206" width="165" height="10" rx="5" fill="#ef2410"/>
 </g>
 <text x="1020.0" y="470.0" text-anchor="middle" fill="#f4f1ea" font-family="ui-sans-serif, system-ui, -apple-system, Segoe UI, Helvetica, Arial, sans-serif" font-size="15" font-weight="600">ctx 96%</text>
 <text x="1020.0" y="490.0" text-anchor="middle" fill="#8b857c" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="12.5">ctx ≥ 95 → X_X</text>
 <text x="1020.0" y="507.0" text-anchor="middle" fill="#8b857c" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="12.5">olho vira cruz</text>
-<text x="1020.0" y="524.0" text-anchor="middle" fill="#8b857c" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="12.5">barra 5h 88%</text>
+<text x="1020.0" y="524.0" text-anchor="middle" fill="#8b857c" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="12.5">barra 96%</text>
 <text x="60" y="566" fill="#d97757" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="13" letter-spacing="2">02</text>
 <text x="60" y="592" fill="#f4f1ea" font-family="ui-sans-serif, system-ui, -apple-system, Segoe UI, Helvetica, Arial, sans-serif" font-size="21" font-weight="600">Estados que não vêm do contexto</text>
 <text x="60" y="614" fill="#8b857c" font-family="ui-sans-serif, system-ui, -apple-system, Segoe UI, Helvetica, Arial, sans-serif" font-size="14">piscar é local (mais rápido quando state=busy) · dormir é a ausência de notícias do PC por 30 s</text>
@@ -232,7 +231,7 @@
 <text x="964.0" y="740" fill="#8b857c" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="12">100</text>
 <text x="724.0" y="780" fill="#8b857c" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="12.5">olho&#160;aberto&#160;&#160;&#160;&#160;&#160;&#160;34 px em ctx 0% → 9 px em ctx 100%</text>
 <text x="724.0" y="802" fill="#8b857c" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="12.5">centro&#160;dos&#160;olhos&#160;(78,104) e (162,104), rx 30</text>
-<text x="724.0" y="824" fill="#8b857c" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="12.5">barra&#160;5&#160;h&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;x 34 y 206 · 172×10 px</text>
+<text x="724.0" y="824" fill="#8b857c" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="12.5">barra&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;x 34 y 206 · 172×10 px</text>
 <text x="724.0" y="846" fill="#8b857c" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="12.5">fundo&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;#f7e3e7 — o rosto do mochi</text>
 <text x="60" y="975" fill="#d97757" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="13" letter-spacing="2">03</text>
 <text x="60" y="1001" fill="#f4f1ea" font-family="ui-sans-serif, system-ui, -apple-system, Segoe UI, Helvetica, Arial, sans-serif" font-size="21" font-weight="600">Proposta: expressões vindas dos hooks</text>

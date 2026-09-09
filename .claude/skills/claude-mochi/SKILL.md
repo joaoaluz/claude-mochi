@@ -62,8 +62,8 @@ Olhando o mochi:
 |------------------------------|-------------------------------------------------|
 | Olhos fechados (tracinho)    | Sem noticias do PC ha mais de 30 s              |
 | Olhos abertos + barra        | Recebendo estado normalmente                    |
-| Olhos mais fechados          | Cota de 5 h mais consumida (e o esperado)       |
-| Olho de tonto (X)            | Cota >= 95% **ou** compactacao em curso         |
+| Olhos mais fechados          | Janela de contexto mais cheia (e o esperado)    |
+| Olho de tonto (X)            | Contexto >= 95% **ou** compactacao em curso     |
 | Varredura 0->100% ao ligar   | Boot demo: display e fiacao OK, sem depender do PC |
 
 ## 3. Problemas, do mais comum para o menos

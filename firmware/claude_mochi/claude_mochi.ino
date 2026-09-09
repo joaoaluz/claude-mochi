@@ -1,5 +1,5 @@
 // claude-mochi — olhos que indicam o consumo de tokens do Claude Code.
-// Por padrao os olhos E a barra seguem o LIMITE DE 5 HORAS.
+// Por padrao os olhos E a barra seguem a JANELA DE CONTEXTO.
 // Troque em OLHOS_METRICA / BARRA_METRICA.
 //
 // Placa   : ESP8266 (NodeMCU / Wemos D1 mini / ESP-12)
@@ -114,16 +114,21 @@ struct State {
 //   1 -> limite de 5 horas (st.win)
 //   0 -> janela de contexto (st.ctx)
 //
-// Padrao: os DOIS no limite de 5h. Olhos e barra concordam sempre na cor, e a
-// barra da o numero exato que a abertura da palpebra so sugere. A janela de
-// contexto deixa de aparecer na tela — o firmware ainda aceita "ctx=" no
+// Padrao: os DOIS na janela de contexto. Olhos e barra concordam sempre na
+// cor, e a barra da o numero exato que a abertura da palpebra so sugere. O
+// limite de 5h deixa de aparecer na tela — o firmware ainda aceita "win=" no
 // protocolo, so nao desenha nada com ele.
 //
-// O limite de 5h anda MUITO mais devagar que o contexto e zera a cada janela,
-// entao o mochi fica bem menos agitado assim. E de proposito: ele mede quanto
-// da sua cota ja foi, nao quanto o chat cresceu.
-#define OLHOS_METRICA 1
-#define BARRA_METRICA 1
+// Por que nao o limite de 5h, que anda mais devagar e deixa o mochi mais
+// calmo: ele so chega aqui pela status line, e o Claude Desktop nao desenha
+// status line. Quem usa o Desktop veria a barra parada no ultimo valor que
+// veio de uma sessao de terminal. O contexto os hooks recalculam do
+// transcript, entao anda nos dois — veja `mochi.py tokens` no README.
+//
+// Quem usa so o terminal pode voltar os dois para 1 e ter de novo a leitura
+// de cota: quanto do seu limite ja foi, em vez de quanto o chat cresceu.
+#define OLHOS_METRICA 0
+#define BARRA_METRICA 0
 
 #if OLHOS_METRICA
   #define VAL_OLHOS (st.win)
