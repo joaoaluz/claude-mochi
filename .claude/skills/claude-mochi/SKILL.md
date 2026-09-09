@@ -63,6 +63,7 @@ Olhando o mochi:
 | Olhos fechados (tracinho)    | Sem noticias do PC ha mais de 30 s              |
 | Olhos abertos + barra        | Recebendo estado normalmente                    |
 | Olhos mais fechados          | Janela de contexto mais cheia (e o esperado)    |
+| Barra comprida               | Cota de 5 h mais consumida                      |
 | Olho de tonto (X)            | Contexto >= 95% **ou** compactacao em curso     |
 | Varredura 0->100% ao ligar   | Boot demo: display e fiacao OK, sem depender do PC |
 
@@ -125,10 +126,11 @@ alimenta os numeros sao os hooks (`mochi.py tokens`), que recalculam a janela de
 contexto a partir do `usage` no transcript. Confira que o hook `PostToolUse`
 existe no `settings.json` — e ele que faz o numero andar durante a resposta.
 
-O limite de 5 horas nao tem como ser recalculado (so existe no JSON da status
-line): no Desktop ele fica parado no ultimo valor visto no terminal, de
-proposito. Para quem so usa o Desktop, aponte `OLHOS_METRICA` e `BARRA_METRICA`
-para o contexto no `.ino`.
+A barra mostra a cota de 5 h, que nao esta em disco nenhum — o app busca ao
+vivo e guarda so na memoria. A fonte no Desktop e o relatorio do `/usage`
+COLADO no chat: `mochi.py tokens` acha ele no transcript, guarda o percentual e
+a hora do reset em `~/.claude/mochi-win.json`, e zera sozinho quando a janela
+vira. Barra parada = faz tempo que nao se cola um `/usage`. Peca um ao usuario.
 
 ### A status line nao aparece no Windows
 

@@ -186,22 +186,22 @@ add(f'<line x1="60" y1="124" x2="{W-60}" y2="124" stroke="#2b2722" stroke-width=
 
 # ------------------------------------------------- 1. rampa de contexto ---
 title(60, 168, "01", "Consumo de contexto → abertura do olho",
-      "openTarget = 1 − 0,72 × ctx/100 · a íris vai de verde a vermelho · a barra de baixo repete o mesmo número")
+      "openTarget = 1 − 0,72 × ctx/100 · a íris vai de verde a vermelho · a barra de baixo é o limite de 5 h")
 
 SC, GAP, TOP = 0.80, 24, 248
-for i, ctx in enumerate([0, 30, 60, 85, 96]):
+for i, (ctx, win) in enumerate([(0, 8), (30, 28), (60, 45), (85, 63), (96, 88)]):
     x = 60 + i * (SCR * SC + GAP)
     ry, iris = eye_h(ctx), level_color(ctx)
     crossed = ctx >= 95
 
-    def body(ry=ry, iris=iris, crossed=crossed, ctx=ctx):
+    def body(ry=ry, iris=iris, crossed=crossed, win=win):
         eye(EYE_CX_L, EYE_CY, ry, iris, crossed=crossed)
         eye(EYE_CX_R, EYE_CY, ry, iris, crossed=crossed)
-        bar(ctx)
+        bar(win)
 
-    sub = [f"olho {ry}px de {EYE_RY}", f"íris {rgb(iris)}", f"barra {ctx}%"]
+    sub = [f"olho {ry}px de {EYE_RY}", f"íris {rgb(iris)}", f"barra 5h {win}%"]
     if crossed:
-        sub = ["ctx ≥ 95 → X_X", "olho vira cruz", f"barra {ctx}%"]
+        sub = ["ctx ≥ 95 → X_X", "olho vira cruz", f"barra 5h {win}%"]
     screen(x, TOP, SC, body, f"ctx {ctx}%", sub, accent=crossed)
 
 # ------------------------------------------------------ 2. estados extras ---
@@ -237,7 +237,7 @@ for pct in (0, 30, 60, 85, 100):
 for i, (k, v) in enumerate([
         ("olho aberto", f"{EYE_RY} px em ctx 0% → {eye_h(100)} px em ctx 100%"),
         ("centro dos olhos", f"({EYE_CX_L},{EYE_CY}) e ({EYE_CX_R},{EYE_CY}), rx {EYE_RX}"),
-        ("barra", f"x {BAR_X} y {BAR_Y} · {BAR_W}×{BAR_H} px"),
+        ("barra 5 h", f"x {BAR_X} y {BAR_Y} · {BAR_W}×{BAR_H} px"),
         ("fundo", f"{FACE} — o rosto do mochi")]):
     add(f'<text x="{lx}" y="{ly+126+i*22}" fill="{DIM}" font-family="{MONO}" '
         f'font-size="12.5">{k.ljust(17).replace(" ", "&#160;")}{v}</text>')

@@ -2,17 +2,21 @@
 
 Um mochi de mesa cujos **olhos indicam o consumo de tokens do Claude Code**.
 
-Quanto mais da **janela de contexto** você gasta, mais os olhos se fecham e
-mais quente fica a cor da íris — verde → âmbar → vermelho. A barrinha embaixo
-mostra o mesmo número, com precisão que a pálpebra só sugere. Passou de 95%
-(ou rodou `/compact`), o mochi fica de olhos tontos (`X_X`). Sem notícias do
-PC por 30 s, ele cochila.
+Cada metade da cara mede uma coisa:
 
-Olhos e barra escolhem a métrica de forma independente, em `OLHOS_METRICA` e
-`BARRA_METRICA` no `.ino`: qualquer um dos dois pode apontar para o limite de
-5 horas em vez da janela de contexto. O contexto é o padrão porque é o único
-que anda no Claude Desktop, que não desenha status line — veja
-[Duas fontes](#duas-fontes-a-status-line-e-os-hooks).
+- **os olhos**, a **janela de contexto** — quanto mais cheia, mais eles se
+  fecham e mais quente fica a íris (verde → âmbar → vermelho). Passou de 95%
+  (ou rodou `/compact`), o mochi fica de olhos tontos (`X_X`);
+- **a barrinha embaixo**, o **limite de 5 horas** — o número que decide se você
+  vai bater na cota hoje.
+
+Sem notícias do PC por 30 s, ele cochila.
+
+A escolha é sua, em `OLHOS_METRICA` e `BARRA_METRICA` no `.ino`: cada elemento
+aponta para a métrica que você quiser. O padrão separa as duas porque elas
+respondem a perguntas diferentes — *o chat está ficando grande?* e *quanto da
+minha cota já foi?* — e porque o contexto anda o tempo todo, o que mantém o
+bicho vivo na mesa.
 
 Inspirado no [clawd-mochi](https://github.com/yousifamanuel/clawd-mochi) do
 Yousif Amanuel — mesma ideia de hardware, mas ligado ao Claude Code em vez de
@@ -84,16 +88,36 @@ andam **durante** a resposta, e não só no fim dela.
 | | status line | hooks (`tokens`) |
 |---|---|---|
 | janela de contexto | pronta no JSON | recalculada do `usage` |
-| limite de 5 h | pronta no JSON | **não dá** |
+| limite de 5 h | pronto no JSON | do relatório do `/usage` |
 | Claude Code no terminal | roda | roda |
 | Claude Desktop | não roda | roda |
 
-O limite de 5 horas só existe no JSON da status line — não está no transcript
-nem em nenhum arquivo local. Nos hooks o `win` é **preservado** como estava, em
-vez de virar zero e mentir que a cota se renovou. Ou seja: no Claude Desktop os
-olhos andam ao vivo pelo contexto, e a barra de 5 h fica no último valor visto
-no terminal. Se você usa só o Desktop, aponte as duas métricas para o contexto
-em `OLHOS_METRICA` / `BARRA_METRICA` no `.ino`.
+### A cota de 5 horas fora da status line
+
+Ela não está em lugar nenhum do disco. O app do Desktop busca ao vivo e guarda
+só na memória — procurei em `Local Storage`, `IndexedDB` e no `main.log` de
+1,4 MB: zero ocorrência de `rate_limit`, `unified` ou `resets`.
+
+Sobra o relatório do `/usage`. Ele não vira registro de comando no transcript,
+mas quando você **cola o texto no chat** ele entra como mensagem — e o formato
+é legível:
+
+```
+Claude Code usage report (2026-09-09T01:14:59.961Z)
+Plan limits:
+- session-0: 13% (resets 2026-09-09T05:20:00.081310+00:00)
+- weekly_all-1: 22% (resets 2026-09-13T07:00:00.081331+00:00)
+```
+
+O `resets` é o que faz isso valer a pena, porque o número nunca mente:
+
+- **exato** no instante do relatório;
+- **piso** depois dele — consumo só sobe dentro da janela, então a barra pode
+  estar curta demais, nunca comprida demais;
+- **zero de verdade** quando a hora do reset passa. A janela rolou; não é chute.
+
+Fica em `~/.claude/mochi-win.json`, junto com a hora do reset e de onde veio o
+número. A status line, quando roda, sobrescreve com o valor exato.
 
 **O tamanho da janela não dá para chutar.** O mesmo modelo roda com 200k ou com
 1M dependendo da conta e do beta ligado, e o transcript não diz qual é. Errar

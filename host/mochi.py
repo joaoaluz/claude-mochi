@@ -40,6 +40,7 @@ A status line e os hooks funcionam sem ele (so escrevem arquivos).
 from __future__ import annotations
 
 import argparse
+import datetime
 import json
 import os
 import pathlib
@@ -530,6 +531,8 @@ def cmd_statusline(args) -> int:
     nome = modelo.get("display_name") or "Claude"
     # A unica fonte confiavel do tamanho da janela: guarda para os hooks.
     _aprende_ctx_size(modelo.get("id") or nome, janela.get("context_window_size"))
+    if cinco_h.get("used_percentage") is not None:
+        _guarda_win(win, cinco_h.get("resets_at"), _agora(), "statusline")
     diretorio = espaco.get("current_dir") or dados.get("cwd") or ""
 
     # ---------------------------------------------------------- publicacao ---
@@ -747,6 +750,124 @@ def ctx_do_transcript(caminho) -> int | None:
     return None
 
 
+# ============================================ o limite de 5 horas (a cota) ==
+
+# A cota NAO esta no transcript nem em disco: o app do Desktop busca ao vivo e
+# guarda so na memoria (procurei em Local Storage, IndexedDB e main.log). A
+# status line recebe ela pronta, mas o Desktop nao desenha status line.
+#
+# Sobra uma fonte: o relatorio do /usage. Ele nao vira registro de comando no
+# transcript, mas quando o usuario cola o texto no chat ele entra como mensagem
+# — e o formato e legivel:
+#
+#   Claude Code usage report (2026-09-09T01:14:59.961Z)
+#   Plan limits:
+#   - session-0: 13% (resets 2026-09-09T05:20:00.081310+00:00)
+#   - weekly_all-1: 22% (resets 2026-09-13T07:00:00.081331+00:00)
+#
+# O "resets" e o que faz isso valer a pena. Com ele o numero nunca mente:
+# exato no instante do relatorio, PISO depois (consumo so sobe dentro da
+# janela) e ZERO de verdade quando a hora do reset passa.
+WIN_FILE = pathlib.Path(os.environ.get("MOCHI_WIN_FILE", HOME_CLAUDE / "mochi-win.json"))
+
+MARCA_USAGE = "Claude Code usage report"
+
+
+def _agora() -> datetime.datetime:
+    return datetime.datetime.now(datetime.timezone.utc)
+
+
+def _iso(txt: str):
+    try:
+        d = datetime.datetime.fromisoformat((txt or "").strip().replace("Z", "+00:00"))
+    except (ValueError, AttributeError):
+        return None
+    return d if d.tzinfo else d.replace(tzinfo=datetime.timezone.utc)
+
+
+def _le_win() -> dict:
+    try:
+        dados = json.loads(WIN_FILE.read_text(encoding="utf-8"))
+        return dados if isinstance(dados, dict) else {}
+    except (OSError, json.JSONDecodeError, UnicodeDecodeError):
+        return {}
+
+
+def win_atual() -> int:
+    """A cota agora: 0 se a janela ja virou, senao o ultimo valor conhecido."""
+    dados = _le_win()
+    reset = _iso(dados.get("resets"))
+    if reset and _agora() >= reset:
+        return 0          # a janela rolou — 0 aqui e verdade, nao chute
+    return _pct(dados.get("pct"))
+
+
+def _guarda_win(pct: int, resets: str | None, visto, fonte: str) -> None:
+    dados = _le_win()
+    anterior = _iso(dados.get("visto"))
+    if anterior and visto and visto <= anterior:
+        return            # ja temos algo mais novo
+    dados.update({"pct": _pct(pct), "resets": resets, "fonte": fonte,
+                  "visto": (visto or _agora()).isoformat()})
+    _write_atomic(WIN_FILE, json.dumps(dados, ensure_ascii=False))
+
+
+def _texto_da_mensagem(reg: dict) -> str:
+    """Texto de um registro do transcript, seja string ou lista de blocos."""
+    conteudo = (reg.get("message") or {}).get("content")
+    if isinstance(conteudo, str):
+        return conteudo
+    if isinstance(conteudo, list):
+        return " ".join(b.get("text", "") for b in conteudo
+                        if isinstance(b, dict) and b.get("type") == "text")
+    return ""
+
+
+def le_relatorio_usage(caminho) -> bool:
+    """Procura o /usage mais recente colado no chat e guarda a cota.
+
+    Devolve True se aprendeu algo novo.
+    """
+    if not caminho:
+        return False
+    try:
+        linhas = _tail_lines(pathlib.Path(caminho))
+    except (OSError, ValueError, TypeError):
+        return False
+
+    for linha in reversed(linhas):
+        if MARCA_USAGE.encode() not in linha:
+            continue
+        try:
+            reg = json.loads(linha.decode("utf-8", "replace"))
+        except (json.JSONDecodeError, ValueError):
+            continue
+        if not isinstance(reg, dict) or reg.get("type") != "user":
+            continue
+        texto = _texto_da_mensagem(reg)
+        if MARCA_USAGE not in texto:
+            continue
+
+        # cabecalho: "Claude Code usage report (2026-09-09T01:14:59.961Z)"
+        cabecalho = texto.split(MARCA_USAGE, 1)[1].partition("(")[2].partition(")")[0]
+        quando = _iso(cabecalho) or _iso(reg.get("timestamp"))
+
+        for l in texto.splitlines():
+            l = l.strip()
+            # "- session-0: 13% (resets 2026-09-09T05:20:00.081310+00:00)"
+            if not l.startswith("- session"):
+                continue
+            pct_txt, _, resto = l.partition(":")[2].strip().partition("%")
+            try:
+                pct = int(pct_txt.strip())
+            except ValueError:
+                continue
+            resets = resto.partition("(resets")[2].strip().rstrip(")").strip() or None
+            _guarda_win(pct, resets, quando, "usage-report")
+            return True
+    return False
+
+
 def cmd_tokens(args) -> int:
     """Publica numeros + modo de uma vez so. E o que os hooks chamam.
 
@@ -762,11 +883,14 @@ def cmd_tokens(args) -> int:
     modo = args.modo if args.modo in ("idle", "busy", "compact") else "idle"
     dados = _stdin_json()
 
+    transcript = dados.get("transcript_path")
     anterior = _read_first_line(STATE_FILE)
-    ctx = ctx_do_transcript(dados.get("transcript_path"))
+    ctx = ctx_do_transcript(transcript)
     if ctx is None:
         ctx = _campo(anterior, "ctx")
-    win = _campo(anterior, "win")
+
+    le_relatorio_usage(transcript)
+    win = win_atual() or _campo(anterior, "win")
 
     link = os.environ.get("MOCHI_LINK", "serial")
     if link in ("serial", "both"):

@@ -1,5 +1,5 @@
 // claude-mochi — olhos que indicam o consumo de tokens do Claude Code.
-// Por padrao os olhos E a barra seguem a JANELA DE CONTEXTO.
+// Por padrao os OLHOS seguem a janela de contexto e a BARRA, o limite de 5h.
 // Troque em OLHOS_METRICA / BARRA_METRICA.
 //
 // Placa   : ESP8266 (NodeMCU / Wemos D1 mini / ESP-12)
@@ -114,21 +114,22 @@ struct State {
 //   1 -> limite de 5 horas (st.win)
 //   0 -> janela de contexto (st.ctx)
 //
-// Padrao: os DOIS na janela de contexto. Olhos e barra concordam sempre na
-// cor, e a barra da o numero exato que a abertura da palpebra so sugere. O
-// limite de 5h deixa de aparecer na tela — o firmware ainda aceita "win=" no
-// protocolo, so nao desenha nada com ele.
+// Padrao: cada um mede uma coisa, que e para o que os dois existem.
 //
-// Por que nao o limite de 5h, que anda mais devagar e deixa o mochi mais
-// calmo: ele so chega aqui pela status line, e o Claude Desktop nao desenha
-// status line. Quem usa o Desktop veria a barra parada no ultimo valor que
-// veio de uma sessao de terminal. O contexto os hooks recalculam do
-// transcript, entao anda nos dois — veja `mochi.py tokens` no README.
+//   OLHOS = contexto. Anda o tempo todo, entao o bicho se mexe. E avisa do
+//           que esta perto: em 95% vem o /compact.
+//   BARRA = cota de 5h. Anda devagar e e o numero que decide se voce vai
+//           bater no limite hoje.
 //
-// Quem usa so o terminal pode voltar os dois para 1 e ter de novo a leitura
-// de cota: quanto do seu limite ja foi, em vez de quanto o chat cresceu.
+// A cor da iris segue os olhos, entao "vermelho" quer dizer contexto cheio,
+// nao cota estourada — a barra e quem fala da cota.
+//
+// As duas chegam ao vivo no Desktop, por caminhos diferentes: o contexto os
+// hooks recalculam do transcript; a cota vem do relatorio do /usage colado no
+// chat, com a hora do reset junto, entao ela zera sozinha na hora certa.
+// Veja `mochi.py tokens` no README.
 #define OLHOS_METRICA 0
-#define BARRA_METRICA 0
+#define BARRA_METRICA 1
 
 #if OLHOS_METRICA
   #define VAL_OLHOS (st.win)
