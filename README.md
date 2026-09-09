@@ -2,21 +2,20 @@
 
 Um mochi de mesa cujos **olhos indicam o consumo de tokens do Claude Code**.
 
-Cada metade da cara mede uma coisa:
+Quanto mais da sua **cota de 5 horas** você gasta, mais os olhos se fecham e
+mais quente fica a cor da íris — verde → âmbar → vermelho. A barrinha embaixo
+mostra o mesmo número, com precisão que a pálpebra só sugere. Passou de 95%
+(ou rodou `/compact`), o mochi fica de olhos tontos (`X_X`). Sem notícias do
+PC por 30 s, ele cochila.
 
-- **os olhos**, a **janela de contexto** — quanto mais cheia, mais eles se
-  fecham e mais quente fica a íris (verde → âmbar → vermelho). Passou de 95%
-  (ou rodou `/compact`), o mochi fica de olhos tontos (`X_X`);
-- **a barrinha embaixo**, o **limite de 5 horas** — o número que decide se você
-  vai bater na cota hoje.
-
-Sem notícias do PC por 30 s, ele cochila.
-
-A escolha é sua, em `OLHOS_METRICA` e `BARRA_METRICA` no `.ino`: cada elemento
-aponta para a métrica que você quiser. O padrão separa as duas porque elas
-respondem a perguntas diferentes — *o chat está ficando grande?* e *quanto da
-minha cota já foi?* — e porque o contexto anda o tempo todo, o que mantém o
-bicho vivo na mesa.
+Olhos e barra escolhem a métrica de forma independente, em `OLHOS_METRICA` e
+`BARRA_METRICA` no `.ino`: qualquer um dos dois pode apontar para a **janela de
+contexto** em vez da cota. A cota é o padrão porque responde à pergunta que
+importa — *vou bater no limite hoje?*. O contexto responde outra, *o chat está
+ficando grande?*, e anda muito mais rápido: bom para quem quer o bicho agitado
+na mesa. Veja [Duas fontes](#duas-fontes-a-status-line-e-os-hooks), que explica
+de onde vem cada número — e por que a cota se atualiza sozinha no terminal, mas
+depende de um `/usage` colado no chat quando você está no Desktop.
 
 Inspirado no [clawd-mochi](https://github.com/yousifamanuel/clawd-mochi) do
 Yousif Amanuel — mesma ideia de hardware, mas ligado ao Claude Code em vez de

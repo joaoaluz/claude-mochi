@@ -185,27 +185,27 @@ add(f'<text x="60" y="102" fill="{DIM}" font-size="15">'
 add(f'<line x1="60" y1="124" x2="{W-60}" y2="124" stroke="#2b2722" stroke-width="1"/>')
 
 # ------------------------------------------------- 1. rampa de contexto ---
-title(60, 168, "01", "Consumo de contexto → abertura do olho",
-      "openTarget = 1 − 0,72 × ctx/100 · a íris vai de verde a vermelho · a barra de baixo é o limite de 5 h")
+title(60, 168, "01", "Consumo → abertura do olho",
+      "openTarget = 1 − 0,72 × valor/100 · a íris vai de verde a vermelho · olho e barra escolhem a métrica em OLHOS_METRICA / BARRA_METRICA")
 
 SC, GAP, TOP = 0.80, 24, 248
-for i, (ctx, win) in enumerate([(0, 8), (30, 28), (60, 45), (85, 63), (96, 88)]):
+for i, ctx in enumerate([0, 30, 60, 85, 96]):
     x = 60 + i * (SCR * SC + GAP)
     ry, iris = eye_h(ctx), level_color(ctx)
     crossed = ctx >= 95
 
-    def body(ry=ry, iris=iris, crossed=crossed, win=win):
+    def body(ry=ry, iris=iris, crossed=crossed, ctx=ctx):
         eye(EYE_CX_L, EYE_CY, ry, iris, crossed=crossed)
         eye(EYE_CX_R, EYE_CY, ry, iris, crossed=crossed)
-        bar(win)
+        bar(ctx)
 
-    sub = [f"olho {ry}px de {EYE_RY}", f"íris {rgb(iris)}", f"barra 5h {win}%"]
+    sub = [f"olho {ry}px de {EYE_RY}", f"íris {rgb(iris)}", f"barra {ctx}%"]
     if crossed:
-        sub = ["ctx ≥ 95 → X_X", "olho vira cruz", f"barra 5h {win}%"]
-    screen(x, TOP, SC, body, f"ctx {ctx}%", sub, accent=crossed)
+        sub = ["valor ≥ 95 → X_X", "olho vira cruz", f"barra {ctx}%"]
+    screen(x, TOP, SC, body, f"{ctx}%", sub, accent=crossed)
 
 # ------------------------------------------------------ 2. estados extras ---
-title(60, 566, "02", "Estados que não vêm do contexto",
+title(60, 566, "02", "Estados que não vêm do número",
       "piscar é local (mais rápido quando state=busy) · dormir é a ausência de notícias do PC por 30 s")
 
 TOP2 = 646
@@ -215,7 +215,7 @@ specials = [
     ("dormindo", ["sem ping há 30 s", "traço cinza #d6d2d6", "volta sozinho ao 1º ping"],
      lambda: (eye(EYE_CX_L, EYE_CY, 0, C_OK, asleep=True),
               eye(EYE_CX_R, EYE_CY, 0, C_OK, asleep=True), bar(0))),
-    ("compactando", ["state=compact", "mesmo X_X do ctx ≥ 95", "PreCompact → PostCompact"],
+    ("compactando", ["state=compact", "mesmo X_X do valor ≥ 95", "PreCompact → PostCompact"],
      lambda: (eye(EYE_CX_L, EYE_CY, 0, C_HOT, crossed=True),
               eye(EYE_CX_R, EYE_CY, 0, C_HOT, crossed=True), bar(63))),
 ]
@@ -235,9 +235,9 @@ for pct in (0, 30, 60, 85, 100):
     add(f'<text x="{lx + pct*2.4}" y="{ly+86}" fill="{DIM}" font-family="{MONO}" '
         f'font-size="12">{pct}</text>')
 for i, (k, v) in enumerate([
-        ("olho aberto", f"{EYE_RY} px em ctx 0% → {eye_h(100)} px em ctx 100%"),
+        ("olho aberto", f"{EYE_RY} px em 0% → {eye_h(100)} px em 100%"),
         ("centro dos olhos", f"({EYE_CX_L},{EYE_CY}) e ({EYE_CX_R},{EYE_CY}), rx {EYE_RX}"),
-        ("barra 5 h", f"x {BAR_X} y {BAR_Y} · {BAR_W}×{BAR_H} px"),
+        ("barra", f"x {BAR_X} y {BAR_Y} · {BAR_W}×{BAR_H} px"),
         ("fundo", f"{FACE} — o rosto do mochi")]):
     add(f'<text x="{lx}" y="{ly+126+i*22}" fill="{DIM}" font-family="{MONO}" '
         f'font-size="12.5">{k.ljust(17).replace(" ", "&#160;")}{v}</text>')

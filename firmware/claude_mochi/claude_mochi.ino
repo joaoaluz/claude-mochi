@@ -1,5 +1,5 @@
 // claude-mochi — olhos que indicam o consumo de tokens do Claude Code.
-// Por padrao os OLHOS seguem a janela de contexto e a BARRA, o limite de 5h.
+// Por padrao os olhos E a barra seguem o LIMITE DE 5 HORAS (a cota).
 // Troque em OLHOS_METRICA / BARRA_METRICA.
 //
 // Placa   : ESP8266 (NodeMCU / Wemos D1 mini / ESP-12)
@@ -114,21 +114,20 @@ struct State {
 //   1 -> limite de 5 horas (st.win)
 //   0 -> janela de contexto (st.ctx)
 //
-// Padrao: cada um mede uma coisa, que e para o que os dois existem.
+// Padrao: os DOIS na cota de 5h. Olhos e barra concordam sempre na cor, e a
+// barra da o numero exato que a abertura da palpebra so sugere. A janela de
+// contexto deixa de aparecer na tela — o firmware ainda aceita "ctx=" no
+// protocolo, so nao desenha nada com ele.
 //
-//   OLHOS = contexto. Anda o tempo todo, entao o bicho se mexe. E avisa do
-//           que esta perto: em 95% vem o /compact.
-//   BARRA = cota de 5h. Anda devagar e e o numero que decide se voce vai
-//           bater no limite hoje.
+// A cota e a metrica que interessa: ela responde "vou bater no limite hoje?".
+// O contexto responde outra coisa, "o chat esta ficando grande?", e para isso
+// o proprio Claude Code ja avisa quando o /compact chega.
 //
-// A cor da iris segue os olhos, entao "vermelho" quer dizer contexto cheio,
-// nao cota estourada — a barra e quem fala da cota.
-//
-// As duas chegam ao vivo no Desktop, por caminhos diferentes: o contexto os
-// hooks recalculam do transcript; a cota vem do relatorio do /usage colado no
-// chat, com a hora do reset junto, entao ela zera sozinha na hora certa.
-// Veja `mochi.py tokens` no README.
-#define OLHOS_METRICA 0
+// O preco: a cota anda devagar e, no Claude Desktop, so se atualiza quando um
+// relatorio do /usage e colado no chat. Entao o mochi passa longos periodos
+// parado — e o esperado, nao e defeito. Quem quiser um bicho mais agitado bota
+// OLHOS_METRICA em 0 e ganha o contexto nos olhos, que anda o tempo todo.
+#define OLHOS_METRICA 1
 #define BARRA_METRICA 1
 
 #if OLHOS_METRICA
