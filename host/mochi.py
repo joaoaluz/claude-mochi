@@ -528,6 +528,8 @@ def cmd_statusline(args) -> int:
     except (TypeError, ValueError):
         usd = 0.0
     nome = modelo.get("display_name") or "Claude"
+    # A unica fonte confiavel do tamanho da janela: guarda para os hooks.
+    _aprende_ctx_size(modelo.get("id") or nome, janela.get("context_window_size"))
     diretorio = espaco.get("current_dir") or dados.get("cwd") or ""
 
     # ---------------------------------------------------------- publicacao ---
@@ -603,8 +605,17 @@ def cmd_mode(args) -> int:
 # custam ~1 ms mesmo num transcript de dezenas de MB.
 TAIL_BYTES = 512 * 1024
 
-# Janela de contexto padrao dos modelos do Claude Code. O Sonnet com o beta de
-# 1M e a excecao; para ele, exporte MOCHI_CTX_SIZE=1000000.
+# Janela de contexto. NAO da para chutar: o mesmo modelo roda com 200k ou com
+# 1M dependendo da conta e do beta ligado, e o transcript nao diz qual e. Errar
+# aqui erra a tela inteira — com 200k assumido numa janela de 1M, 158k de
+# contexto viram 79% em vez de 16%.
+#
+# Entao o tamanho e APRENDIDO: a status line recebe context_window_size pronto
+# no JSON e guarda o valor por modelo neste arquivo. Os hooks so consultam. Uma
+# unica sessao no terminal ja calibra o Desktop para sempre. Sem nenhuma
+# calibracao, MOCHI_CTX_SIZE resolve na mao.
+CTX_SIZES_FILE = pathlib.Path(
+    os.environ.get("MOCHI_CTX_SIZES_FILE", HOME_CLAUDE / "mochi-ctx-sizes.json"))
 CTX_SIZE_PADRAO = 200_000
 
 
@@ -634,12 +645,47 @@ def _campo(linha: str, chave: str) -> int:
     return 0
 
 
-def _ctx_size() -> int:
+def _ctx_sizes() -> dict:
     try:
-        n = int(os.environ.get("MOCHI_CTX_SIZE") or CTX_SIZE_PADRAO)
-    except ValueError:
-        return CTX_SIZE_PADRAO
-    return n if n > 0 else CTX_SIZE_PADRAO
+        dados = json.loads(CTX_SIZES_FILE.read_text(encoding="utf-8"))
+        return dados if isinstance(dados, dict) else {}
+    except (OSError, json.JSONDecodeError, UnicodeDecodeError):
+        return {}
+
+
+def _ctx_size(modelo: str | None = None) -> int:
+    """Tamanho da janela: variavel de ambiente > aprendido > padrao."""
+    forcado = os.environ.get("MOCHI_CTX_SIZE")
+    if forcado:
+        try:
+            n = int(forcado)
+            if n > 0:
+                return n
+        except ValueError:
+            pass
+    if modelo:
+        try:
+            n = int(_ctx_sizes().get(modelo) or 0)
+            if n > 0:
+                return n
+        except (TypeError, ValueError):
+            pass
+    return CTX_SIZE_PADRAO
+
+
+def _aprende_ctx_size(modelo: str | None, tamanho) -> None:
+    """Guarda o context_window_size que a status line recebeu, por modelo."""
+    try:
+        n = int(tamanho or 0)
+    except (TypeError, ValueError):
+        return
+    if not modelo or n <= 0:
+        return
+    sizes = _ctx_sizes()
+    if sizes.get(modelo) == n:
+        return
+    sizes[modelo] = n
+    _write_atomic(CTX_SIZES_FILE, json.dumps(sizes, ensure_ascii=False))
 
 
 def _tail_lines(path: pathlib.Path) -> list[bytes]:
@@ -687,7 +733,8 @@ def ctx_do_transcript(caminho) -> int | None:
             continue
         if reg.get("type") != "assistant" or reg.get("isSidechain"):
             continue
-        uso = ((reg.get("message") or {}).get("usage")) or {}
+        msg = reg.get("message") or {}
+        uso = msg.get("usage") or {}
         total = 0
         for chave in ("input_tokens", "cache_read_input_tokens",
                       "cache_creation_input_tokens", "output_tokens"):
@@ -696,7 +743,7 @@ def ctx_do_transcript(caminho) -> int | None:
             except (TypeError, ValueError):
                 pass
         if total > 0:
-            return max(0, min(100, round(100 * total / _ctx_size())))
+            return max(0, min(100, round(100 * total / _ctx_size(msg.get("model")))))
     return None
 
 
@@ -957,6 +1004,9 @@ def cmd_doctor(args) -> int:
             print(f"{rotulo:<17} {_read_first_line(caminho)!r}  ({idade:.0f}s atras)")
         else:
             print(f"{rotulo:<17} ainda nao existe (status line e hooks nao rodaram)")
+    sizes = _ctx_sizes()
+    print(f"{'janela':<17} " + (", ".join(f"{m}={n:,}" for m, n in sizes.items())
+                                if sizes else f"nao aprendida (assumindo {CTX_SIZE_PADRAO:,})"))
 
     print("\n-- claude code --")
     settings_path = HOME_CLAUDE / "settings.json"

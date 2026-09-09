@@ -95,8 +95,21 @@ olhos andam ao vivo pelo contexto, e a barra de 5 h fica no último valor visto
 no terminal. Se você usa só o Desktop, aponte as duas métricas para o contexto
 em `OLHOS_METRICA` / `BARRA_METRICA` no `.ino`.
 
-A conta assume janela de 200k, que é a de todos os modelos atuais. Para o Sonnet
-com o beta de 1M, exporte `MOCHI_CTX_SIZE=1000000`.
+**O tamanho da janela não dá para chutar.** O mesmo modelo roda com 200k ou com
+1M dependendo da conta e do beta ligado, e o transcript não diz qual é. Errar
+esse denominador erra a tela inteira: com 200k assumido numa janela de 1M,
+158k de contexto viram 79% em vez de 16% — olhos quase fechados e íris vermelha
+numa sessão que mal começou.
+
+Por isso o tamanho é **aprendido**, não chutado. A status line recebe
+`context_window_size` pronto no JSON e guarda o valor por modelo em
+`~/.claude/mochi-ctx-sizes.json`; os hooks só consultam. Uma única sessão no
+terminal já calibra o Desktop para sempre. Sem nenhuma calibração ele assume
+200k, e `MOCHI_CTX_SIZE` resolve na mão. O `doctor` mostra o que foi aprendido:
+
+```
+janela            claude-opus-5=1,000,000
+```
 
 ---
 
@@ -422,7 +435,7 @@ No macOS o equivalente é um `launchd` plist em `~/Library/LaunchAgents/`.
 | `MOCHI_LINK` | `serial` | `serial`, `http` ou `both` |
 | `MOCHI_HOST` | `mochi.local` | destino no modo http |
 | `MOCHI_AUTOSTART` | `1` | `0` desliga o autostart da ponte |
-| `MOCHI_CTX_SIZE` | `200000` | janela de contexto usada na conta dos hooks |
+| `MOCHI_CTX_SIZE` | aprendido | força a janela de contexto usada na conta dos hooks |
 | `MOCHI_STATE_FILE` / `MOCHI_MODE_FILE` | `~/.claude/mochi-*` | onde ficam os arquivos de estado |
 
 ### Modo Wi-Fi
