@@ -55,6 +55,47 @@ de desenvolvedor, não o da assinatura Pro/Max, e os dados chegam com ~5 min de
 atraso em buckets de 1m/1h/1d. A status line é instantânea, local, sem chave e
 funciona em qualquer tipo de conta.
 
+### Duas fontes: a status line e os hooks
+
+A status line é a fonte completa — traz os dois números prontos. Mas **o Claude
+Desktop não desenha status line**, e lá ela simplesmente nunca roda: os olhos
+ficariam parados no último número que veio do terminal.
+
+Quem cobre esse buraco são os **hooks**, que rodam nos dois. Todo hook recebe no
+stdin o caminho do transcript da sessão (`transcript_path`), e o `.jsonl` de lá
+traz o `usage` de cada resposta:
+
+```json
+"usage": { "input_tokens": 2, "cache_read_input_tokens": 70639,
+           "cache_creation_input_tokens": 713, "output_tokens": 480 }
+```
+
+A soma dos quatro é o que ocupa a janela de contexto — o mesmo número que a
+status line receberia pronto em `context_window.used_percentage`. É isso que
+`mochi.py tokens` recalcula, lendo só os últimos 512 KB do arquivo (~1 ms num
+transcript de meio mega) e pulando mensagens de subagente (`isSidechain`), cujo
+contexto é outro e faria os olhos abrirem no meio de uma busca.
+
+`PostToolUse` é quem dá o *ao vivo*: dispara a cada ferramenta, então os números
+andam **durante** a resposta, e não só no fim dela.
+
+| | status line | hooks (`tokens`) |
+|---|---|---|
+| janela de contexto | pronta no JSON | recalculada do `usage` |
+| limite de 5 h | pronta no JSON | **não dá** |
+| Claude Code no terminal | roda | roda |
+| Claude Desktop | não roda | roda |
+
+O limite de 5 horas só existe no JSON da status line — não está no transcript
+nem em nenhum arquivo local. Nos hooks o `win` é **preservado** como estava, em
+vez de virar zero e mentir que a cota se renovou. Ou seja: no Claude Desktop os
+olhos andam ao vivo pelo contexto, e a barra de 5 h fica no último valor visto
+no terminal. Se você usa só o Desktop, aponte as duas métricas para o contexto
+em `OLHOS_METRICA` / `BARRA_METRICA` no `.ino`.
+
+A conta assume janela de 200k, que é a de todos os modelos atuais. Para o Sonnet
+com o beta de 1M, exporte `MOCHI_CTX_SIZE=1000000`.
+
 ---
 
 ## Escolha a ligação: serial ou Wi-Fi
@@ -263,7 +304,8 @@ O `install`:
 
 - copia o `mochi.py` para `~/.claude/`;
 - faz backup do seu `settings.json` (`settings.json.bak-mochi`);
-- escreve a `statusLine` e os hooks, **preservando** o que já estava lá;
+- escreve a `statusLine` e os hooks (inclusive o `PostToolUse`, que mantém os
+  números vivos no Desktop), **preservando** o que já estava lá;
 - sobe a ponte serial.
 
 Rodar de novo é seguro — ele troca a própria configuração em vez de duplicar.
@@ -315,6 +357,7 @@ python host/mochi.py ports             # portas e a nota de cada uma
 python host/mochi.py start | stop | restart
 python host/mochi.py bridge -v         # ponte em primeiro plano, com log
 python host/mochi.py send "ctx=50 win=80 state=busy"   # teste direto
+python host/mochi.py tokens busy -v < hook.json        # o que os hooks fazem
 python host/mochi.py uninstall         # tira do settings.json
 ```
 
@@ -377,6 +420,7 @@ No macOS o equivalente é um `launchd` plist em `~/Library/LaunchAgents/`.
 | `MOCHI_LINK` | `serial` | `serial`, `http` ou `both` |
 | `MOCHI_HOST` | `mochi.local` | destino no modo http |
 | `MOCHI_AUTOSTART` | `1` | `0` desliga o autostart da ponte |
+| `MOCHI_CTX_SIZE` | `200000` | janela de contexto usada na conta dos hooks |
 | `MOCHI_STATE_FILE` / `MOCHI_MODE_FILE` | `~/.claude/mochi-*` | onde ficam os arquivos de estado |
 
 ### Modo Wi-Fi

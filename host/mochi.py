@@ -14,7 +14,8 @@ Subcomandos:
 
     mochi.py install        instala em ~/.claude e configura settings.json
     mochi.py statusline     status line do Claude Code (le JSON no stdin)
-    mochi.py mode busy      publica o modo (chamado pelos hooks)
+    mochi.py tokens busy    numeros + modo, lidos do transcript (hooks)
+    mochi.py mode busy      so o modo, sem tocar nos numeros
     mochi.py bridge         ponte serial em primeiro plano (com log)
     mochi.py start|stop     ponte serial em segundo plano
     mochi.py doctor         diagnostico: portas, ponte, firmware
@@ -511,17 +512,7 @@ def cmd_statusline(args) -> int:
     inicio da sessao e logo depois de um /compact. Por isso tudo passa por
     .get() com padrao — a status line nao pode quebrar nunca.
     """
-    try:
-        bruto = sys.stdin.read()
-        # O PowerShell coloca um BOM (﻿) na frente do que manda para um
-        # processo nativo, e json.loads engasga nele. Sem isto, num Windows sem
-        # Git Bash a status line cai no except e o mochi fica em 0% para sempre.
-        bruto = bruto.lstrip("﻿\r\n\t ")
-        dados = json.loads(bruto) if bruto else {}
-    except (json.JSONDecodeError, OSError, UnicodeDecodeError):
-        dados = {}
-    if not isinstance(dados, dict):
-        dados = {}
+    dados = _stdin_json()
 
     janela = dados.get("context_window") or {}
     limites = dados.get("rate_limits") or {}
@@ -605,6 +596,146 @@ def cmd_mode(args) -> int:
     return 0
 
 
+# ============================================= numeros vindos do transcript ==
+
+# Quanto da cauda do .jsonl lemos atras do ultimo `usage`. Uma linha de
+# assistant raramente passa de poucos KB; 512 KB cobrem varias com folga e
+# custam ~1 ms mesmo num transcript de dezenas de MB.
+TAIL_BYTES = 512 * 1024
+
+# Janela de contexto padrao dos modelos do Claude Code. O Sonnet com o beta de
+# 1M e a excecao; para ele, exporte MOCHI_CTX_SIZE=1000000.
+CTX_SIZE_PADRAO = 200_000
+
+
+def _stdin_json() -> dict:
+    """JSON que o Claude Code manda no stdin (status line e hooks).
+
+    Com stdin num terminal nao ha o que ler e um read() ficaria pendurado — por
+    isso o isatty(). O PowerShell prefixa um BOM ao que manda para um processo
+    nativo, e json.loads engasga nele; o lstrip tira.
+    """
+    try:
+        if sys.stdin is None or sys.stdin.isatty():
+            return {}
+        bruto = sys.stdin.read().lstrip("\ufeff\r\n\t ")
+        dados = json.loads(bruto) if bruto else {}
+    except (json.JSONDecodeError, OSError, UnicodeDecodeError, ValueError):
+        return {}
+    return dados if isinstance(dados, dict) else {}
+
+
+def _campo(linha: str, chave: str) -> int:
+    """Le `ctx` ou `win` de uma linha 'ctx=42 win=63' ja gravada."""
+    for par in linha.split():
+        k, _, v = par.partition("=")
+        if k == chave:
+            return _pct(v)
+    return 0
+
+
+def _ctx_size() -> int:
+    try:
+        n = int(os.environ.get("MOCHI_CTX_SIZE") or CTX_SIZE_PADRAO)
+    except ValueError:
+        return CTX_SIZE_PADRAO
+    return n if n > 0 else CTX_SIZE_PADRAO
+
+
+def _tail_lines(path: pathlib.Path) -> list[bytes]:
+    with path.open("rb") as fh:
+        fh.seek(0, os.SEEK_END)
+        tamanho = fh.tell()
+        fh.seek(max(0, tamanho - TAIL_BYTES))
+        bruto = fh.read()
+    linhas = bruto.split(b"\n")
+    if tamanho > TAIL_BYTES:
+        linhas = linhas[1:]      # a primeira veio cortada no meio
+    return linhas
+
+
+def ctx_do_transcript(caminho) -> int | None:
+    """% da janela de contexto, recalculado do ultimo `usage` do transcript.
+
+    E o mesmo numero que a status line recebe pronto em
+    `context_window.used_percentage`. Aqui ele e refeito na mao porque o hook
+    nao recebe esse campo — recebe o caminho do transcript, e la esta o `usage`
+    de cada resposta: o que entrou (input + cache lido + cache escrito) mais o
+    que saiu e um dia vira entrada.
+
+    Mensagens de subagente (`isSidechain`) sao puladas: o contexto delas e
+    outro, e sem isso os olhos abririam de repente no meio de uma busca.
+
+    Devolve None quando nao da para saber — o chamador preserva o valor antigo
+    em vez de zerar o mochi.
+    """
+    if not caminho:
+        return None
+    try:
+        linhas = _tail_lines(pathlib.Path(caminho))
+    except (OSError, ValueError, TypeError):
+        return None
+
+    for linha in reversed(linhas):
+        if b'"usage"' not in linha:
+            continue
+        try:
+            reg = json.loads(linha.decode("utf-8", "replace"))
+        except (json.JSONDecodeError, ValueError):
+            continue
+        if not isinstance(reg, dict):
+            continue
+        if reg.get("type") != "assistant" or reg.get("isSidechain"):
+            continue
+        uso = ((reg.get("message") or {}).get("usage")) or {}
+        total = 0
+        for chave in ("input_tokens", "cache_read_input_tokens",
+                      "cache_creation_input_tokens", "output_tokens"):
+            try:
+                total += int(uso.get(chave) or 0)
+            except (TypeError, ValueError):
+                pass
+        if total > 0:
+            return max(0, min(100, round(100 * total / _ctx_size())))
+    return None
+
+
+def cmd_tokens(args) -> int:
+    """Publica numeros + modo de uma vez so. E o que os hooks chamam.
+
+    Existe porque o Claude Desktop nao desenha status line: la o
+    `mochi.py statusline` nunca roda, e sem isto os olhos ficariam parados no
+    ultimo numero que veio do terminal. Hooks rodam nos dois, e todo hook
+    recebe o transcript no stdin.
+
+    O que NAO da para recalcular daqui e o limite de 5 horas: ele so aparece no
+    JSON da status line, nunca no transcript. Por isso `win` e preservado como
+    estava, em vez de virar zero e mentir que a cota se renovou.
+    """
+    modo = args.modo if args.modo in ("idle", "busy", "compact") else "idle"
+    dados = _stdin_json()
+
+    anterior = _read_first_line(STATE_FILE)
+    ctx = ctx_do_transcript(dados.get("transcript_path"))
+    if ctx is None:
+        ctx = _campo(anterior, "ctx")
+    win = _campo(anterior, "win")
+
+    link = os.environ.get("MOCHI_LINK", "serial")
+    if link in ("serial", "both"):
+        _write_atomic(STATE_FILE, f"ctx={ctx} win={win}")
+        _write_atomic(MODE_FILE, modo)
+        if os.environ.get("MOCHI_AUTOSTART", "1") != "0" and not bridge_alive():
+            spawn_bridge()
+    if link in ("http", "both"):
+        _fire_http(f"ctx={ctx}&win={win}")
+        _fire_http(f"state={modo}")
+
+    if getattr(args, "verbose", False):
+        print(f"ctx={ctx} win={win} state={modo}")
+    return 0
+
+
 # ================================================================= install ===
 
 def _fs(p) -> str:
@@ -671,7 +802,7 @@ def cmd_install(args) -> int:
         return {"hooks": [{
             "type": "command",
             "command": sys.executable,
-            "args": [str(destino), "mode", modo],
+            "args": [str(destino), "tokens", modo],
         }]}
 
     settings_path = HOME_CLAUDE / "settings.json"
@@ -697,6 +828,10 @@ def cmd_install(args) -> int:
             hooks = {}
         for evento, modo in (("SessionStart", "idle"),
                              ("UserPromptSubmit", "busy"),
+                             # PostToolUse e quem da o "ao vivo": dispara a cada
+                             # ferramenta, entao os numeros andam durante a
+                             # resposta, e nao so no fim dela.
+                             ("PostToolUse", "busy"),
                              ("Stop", "idle"),
                              ("PreCompact", "compact"),
                              ("PostCompact", "busy"),
@@ -821,7 +956,7 @@ def cmd_doctor(args) -> int:
             idade = time.time() - caminho.stat().st_mtime
             print(f"{rotulo:<17} {_read_first_line(caminho)!r}  ({idade:.0f}s atras)")
         else:
-            print(f"{rotulo:<17} ainda nao existe (a status line nao rodou)")
+            print(f"{rotulo:<17} ainda nao existe (status line e hooks nao rodaram)")
 
     print("\n-- claude code --")
     settings_path = HOME_CLAUDE / "settings.json"
@@ -886,6 +1021,12 @@ def main() -> int:
     p.add_argument("modo", nargs="?", default="idle",
                    choices=["idle", "busy", "compact"])
     p.set_defaults(func=cmd_mode)
+
+    p = sub.add_parser("tokens", help="numeros + modo, do transcript (hooks)")
+    p.add_argument("modo", nargs="?", default="busy",
+                   choices=["idle", "busy", "compact"])
+    p.add_argument("-v", "--verbose", action="store_true")
+    p.set_defaults(func=cmd_tokens)
 
     p = sub.add_parser("bridge", help="ponte serial em primeiro plano")
     p.add_argument("--port", help="porta serial (padrao: detecta sozinho)")

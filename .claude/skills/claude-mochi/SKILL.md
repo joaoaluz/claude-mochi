@@ -105,9 +105,10 @@ ou defina a variavel de ambiente `MOCHI_PORT`.
 A placa esta viva, o PC e que nao esta falando. Verifique nesta ordem:
 
 1. `PY host/mochi.py doctor` — a ponte esta rodando?
-2. O `estado` esta velho (muitos segundos atras)? Entao a status line nao esta
-   rodando: confira se o `settings.json` tem a `statusLine` do mochi e se o
-   Claude Desktop foi reiniciado depois do `install`.
+2. O `estado` esta velho (muitos segundos atras)? Entao nem a status line nem
+   os hooks estao rodando: confira se o `settings.json` tem a `statusLine` e os
+   hooks do mochi, e se o Claude Desktop foi reiniciado depois do `install` —
+   hooks so passam a valer em sessao nova.
 3. Teste o caminho direto, sem a ponte:
    ```bash
    PY host/mochi.py stop
@@ -116,6 +117,18 @@ A placa esta viva, o PC e que nao esta falando. Verifique nesta ordem:
    ```
    Se o `send` responder `b'ok\r\n'`, firmware e cabo estao bons e o problema
    esta na status line.
+
+### Os numeros ficam parados no Claude Desktop
+
+Esperado ate certo ponto: **o Desktop nao desenha status line**, entao la quem
+alimenta os numeros sao os hooks (`mochi.py tokens`), que recalculam a janela de
+contexto a partir do `usage` no transcript. Confira que o hook `PostToolUse`
+existe no `settings.json` — e ele que faz o numero andar durante a resposta.
+
+O limite de 5 horas nao tem como ser recalculado (so existe no JSON da status
+line): no Desktop ele fica parado no ultimo valor visto no terminal, de
+proposito. Para quem so usa o Desktop, aponte `OLHOS_METRICA` e `BARRA_METRICA`
+para o contexto no `.ino`.
 
 ### A status line nao aparece no Windows
 
