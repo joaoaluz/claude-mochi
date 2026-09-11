@@ -15,7 +15,7 @@ Subcomandos:
     mochi.py install        instala em ~/.claude e configura settings.json
     mochi.py statusline     status line do Claude Code (le JSON no stdin)
     mochi.py tokens busy    numeros + modo, lidos do transcript (hooks)
-    mochi.py mode busy      so o modo, sem tocar nos numeros
+    mochi.py mode ask       so o modo, sem tocar nos numeros
     mochi.py bridge         ponte serial em primeiro plano (com log)
     mochi.py start|stop     ponte serial em segundo plano
     mochi.py doctor         diagnostico: portas, ponte, firmware
@@ -53,6 +53,8 @@ HOME_CLAUDE = pathlib.Path(os.path.expanduser("~")) / ".claude"
 
 STATE_FILE = pathlib.Path(os.environ.get("MOCHI_STATE_FILE", HOME_CLAUDE / "mochi-state"))
 MODE_FILE = pathlib.Path(os.environ.get("MOCHI_MODE_FILE", HOME_CLAUDE / "mochi-mode"))
+# Vocabulario de modo. Uma lista so: argparse, validacao e hooks leem daqui.
+MODOS = ("idle", "busy", "compact", "ask")
 PORT_CACHE = HOME_CLAUDE / "mochi-port"          # ultima porta que funcionou
 BEAT_FILE = HOME_CLAUDE / "mochi-bridge.beat"    # ponte viva? (pid + mtime)
 LOG_FILE = HOME_CLAUDE / "mochi-bridge.log"
@@ -378,7 +380,7 @@ def compose_line() -> str:
     """Monta a linha do protocolo: 'ctx=42 win=63 state=busy'."""
     payload = _read_first_line(STATE_FILE) or "ctx=0 win=0"
     modo = _read_first_line(MODE_FILE) or "idle"
-    if modo not in ("idle", "busy", "compact"):
+    if modo not in MODOS:
         modo = "idle"
     return f"{payload} state={modo}"
 
@@ -531,8 +533,14 @@ def cmd_statusline(args) -> int:
     nome = modelo.get("display_name") or "Claude"
     # A unica fonte confiavel do tamanho da janela: guarda para os hooks.
     _aprende_ctx_size(modelo.get("id") or nome, janela.get("context_window_size"))
-    if cinco_h.get("used_percentage") is not None:
+    # Prioridade por FONTE, nao por relogio. As duas carimbam "agora", entao
+    # desempatar por timestamp so faz a ultima a rodar ganhar — e a status line
+    # roda a cada mensagem, enquanto o widget so e lido nos hooks. Resultado:
+    # o numero do widget aparecia e sumia. Aqui a regra fica explicita: widget
+    # vivo manda, status line e o reserva.
+    if le_widget_usage() and cinco_h.get("used_percentage") is not None:
         _guarda_win(win, cinco_h.get("resets_at"), _agora(), "statusline")
+    win = win_atual() or win
     diretorio = espaco.get("current_dir") or dados.get("cwd") or ""
 
     # ---------------------------------------------------------- publicacao ---
@@ -591,8 +599,8 @@ def _fire_http(query: str) -> None:
 
 
 def cmd_mode(args) -> int:
-    """Publica o modo (idle | busy | compact). Chamado pelos hooks."""
-    modo = args.modo if args.modo in ("idle", "busy", "compact") else "idle"
+    """Publica o modo (idle | busy | compact | ask). Chamado pelos hooks."""
+    modo = args.modo if args.modo in MODOS else "idle"
     link = os.environ.get("MOCHI_LINK", "serial")
     if link in ("serial", "both"):
         _write_atomic(MODE_FILE, modo)
@@ -777,10 +785,18 @@ def _agora() -> datetime.datetime:
     return datetime.datetime.now(datetime.timezone.utc)
 
 
-def _iso(txt: str):
+def _iso(txt):
+    # `resets_at` da status line vem como epoch (numero), nao ISO. Sem isto o
+    # _iso devolvia None e win_atual() nunca zerava a cota quando a janela
+    # virava: o mochi ficava preso no ultimo percentual para sempre.
+    if isinstance(txt, (int, float)) and not isinstance(txt, bool):
+        try:
+            return datetime.datetime.fromtimestamp(txt, datetime.timezone.utc)
+        except (OSError, OverflowError, ValueError):
+            return None
     try:
         d = datetime.datetime.fromisoformat((txt or "").strip().replace("Z", "+00:00"))
-    except (ValueError, AttributeError):
+    except (ValueError, AttributeError, TypeError):
         return None
     return d if d.tzinfo else d.replace(tzinfo=datetime.timezone.utc)
 
@@ -807,7 +823,21 @@ def _guarda_win(pct: int, resets: str | None, visto, fonte: str) -> None:
     anterior = _iso(dados.get("visto"))
     if anterior and visto and visto <= anterior:
         return            # ja temos algo mais novo
-    dados.update({"pct": _pct(pct), "resets": resets, "fonte": fonte,
+    # O widget nao manda `resets` (so tem o numero, ja atualizado ao vivo), e
+    # preservar o `resets` antigo do slot ajuda quando ele so ficou em silencio
+    # por alguns minutos. Mas depois de o PC dormir/desconectar por horas, esse
+    # `resets` HERDADO ja passou — e um pct FRESCO (do widget) com um reset
+    # MORTO (de uma fonte antiga) fazia win_atual() zerar a cota, mentindo.
+    # So descarta o herdado; um `resets` que esta fonte trouxe agora, mesmo
+    # vencido, e informacao real dela (ex.: usage-report dizendo que aquela
+    # janela ja fechou) e continua valendo.
+    herdado = dados.get("resets")
+    if not resets and herdado:
+        reset_iso = _iso(herdado)
+        if reset_iso and (visto or _agora()) >= reset_iso:
+            herdado = None
+    dados.update({"pct": _pct(pct), "resets": resets or herdado,
+                  "fonte": fonte,
                   "visto": (visto or _agora()).isoformat()})
     _write_atomic(WIN_FILE, json.dumps(dados, ensure_ascii=False))
 
@@ -868,6 +898,57 @@ def le_relatorio_usage(caminho) -> bool:
     return False
 
 
+# ================================================ cota do widget claude-usage ==
+
+# O claude-usage (extensao Chrome + servidor local em 127.0.0.1:7878) le a API
+# real de uso do claude.ai a cada 15s. Enquanto ele estiver de pe esta e a
+# MELHOR fonte da cota: numero vivo, sem depender de colar /usage no chat — que
+# e exatamente o buraco do Claude Desktop, onde a status line nunca roda.
+USAGE_URL = os.environ.get("MOCHI_USAGE_URL", "http://127.0.0.1:7878/usage")
+
+# Widget aberto mas extensao morta (Chrome fechado, sessao caiu) devolve o
+# ultimo numero para sempre. Sem este corte ele sobrescreveria o /usage do
+# transcript a cada hook e congelaria o mochi num valor velho.
+USAGE_MAX_IDADE_S = 300
+
+
+def le_widget_usage() -> str:
+    """Le a cota do widget claude-usage.
+
+    Devolve "" quando aprendeu, ou o motivo da recusa. Motivo em vez de False
+    porque as duas falhas pedem conserto diferente: "nao respondeu" e o widget
+    fechado, "dado de X min atras" e o widget aberto com a extensao parada — e
+    quem so ve um bool sai procurando o problema errado.
+    """
+    try:
+        import urllib.request
+        with urllib.request.urlopen(USAGE_URL, timeout=0.4) as r:
+            dados = json.loads(r.read().decode("utf-8", "replace"))
+    except Exception:
+        return "nao respondeu (widget fechado?)"
+
+    # `atualizado_em` e datetime.now() sem fuso — compare com now() sem fuso
+    # tambem, senao 3h de diferenca fazem todo dado parecer velho.
+    try:
+        visto = datetime.datetime.fromisoformat(dados.get("atualizado_em") or "")
+    except (TypeError, ValueError):
+        return "sem atualizado_em valido"
+    idade = abs((datetime.datetime.now() - visto).total_seconds())
+    if idade > USAGE_MAX_IDADE_S:
+        return (f"dado de {idade/60:.0f} min atras "
+                "(widget de pe, extensao parada; logado no claude.ai?)")
+
+    pct = (dados.get("sessao_atual") or {}).get("percentual")
+    if pct is None:
+        return "sem sessao_atual.percentual"
+    # ponytail: resets=None de proposito. O widget so publica o reset ja
+    # humanizado ("2h15min"), e enquanto ele estiver vivo nao precisamos
+    # extrapolar nada — o proprio numero zera quando a janela vira. Se ele
+    # morrer, _guarda_win preserva o resets que o /usage tinha deixado.
+    _guarda_win(_pct(pct), None, _agora(), "widget")
+    return ""
+
+
 def cmd_tokens(args) -> int:
     """Publica numeros + modo de uma vez so. E o que os hooks chamam.
 
@@ -880,7 +961,7 @@ def cmd_tokens(args) -> int:
     JSON da status line, nunca no transcript. Por isso `win` e preservado como
     estava, em vez de virar zero e mentir que a cota se renovou.
     """
-    modo = args.modo if args.modo in ("idle", "busy", "compact") else "idle"
+    modo = args.modo if args.modo in MODOS else "idle"
     dados = _stdin_json()
 
     transcript = dados.get("transcript_path")
@@ -890,6 +971,7 @@ def cmd_tokens(args) -> int:
         ctx = _campo(anterior, "ctx")
 
     le_relatorio_usage(transcript)
+    le_widget_usage()
     win = win_atual() or _campo(anterior, "win")
 
     link = os.environ.get("MOCHI_LINK", "serial")
@@ -1003,6 +1085,9 @@ def cmd_install(args) -> int:
                              # ferramenta, entao os numeros andam durante a
                              # resposta, e nao so no fim dela.
                              ("PostToolUse", "busy"),
+                             # Notification = o Claude parou para perguntar
+                             # alguma coisa (permissao, escolha): "?" na tela.
+                             ("Notification", "ask"),
                              ("Stop", "idle"),
                              ("PreCompact", "compact"),
                              ("PostCompact", "busy"),
@@ -1083,6 +1168,10 @@ def cmd_send(args) -> int:
         time.sleep(0.4)
         print(f"{port} <- {args.linha}")
         print(f"{port} -> {ser.read(200)!r}")
+        if args.hold > 0:
+            print(f"segurando a porta aberta por {args.hold:.0f}s "
+                  "(feche o terminal ou espere passar pra soltar)...")
+            time.sleep(args.hold)
     finally:
         ser.close()
     return 0
@@ -1131,6 +1220,14 @@ def cmd_doctor(args) -> int:
     sizes = _ctx_sizes()
     print(f"{'janela':<17} " + (", ".join(f"{m}={n:,}" for m, n in sizes.items())
                                 if sizes else f"nao aprendida (assumindo {CTX_SIZE_PADRAO:,})"))
+
+    print("\n-- cota de 5h --")
+    motivo = le_widget_usage()
+    w = _le_win()
+    print(f"{'valor':<17} {win_atual()}%  (fonte: {w.get('fonte') or 'nenhuma'})")
+    print(f"{'no mochi agora':<17} {_campo(_read_first_line(STATE_FILE), 'win')}%")
+    print(f"{'widget usage':<17} " + (motivo or "ok, cota veio dele"))
+    print(f"{'':<17} {USAGE_URL}")
 
     print("\n-- claude code --")
     settings_path = HOME_CLAUDE / "settings.json"
@@ -1193,12 +1290,12 @@ def main() -> int:
 
     p = sub.add_parser("mode", help="publica o modo (chamado pelos hooks)")
     p.add_argument("modo", nargs="?", default="idle",
-                   choices=["idle", "busy", "compact"])
+                   choices=list(MODOS))
     p.set_defaults(func=cmd_mode)
 
     p = sub.add_parser("tokens", help="numeros + modo, do transcript (hooks)")
     p.add_argument("modo", nargs="?", default="busy",
-                   choices=["idle", "busy", "compact"])
+                   choices=list(MODOS))
     p.add_argument("-v", "--verbose", action="store_true")
     p.set_defaults(func=cmd_tokens)
 
@@ -1242,6 +1339,11 @@ def main() -> int:
     p = sub.add_parser("send", help="manda uma linha crua (teste)")
     p.add_argument("linha")
     p.add_argument("--port")
+    p.add_argument("--hold", type=float, default=0.0,
+                    help="segura a porta aberta por N segundos antes de fechar. "
+                         "Fechar a porta reseta o ESP (mesmo com DTR/RTS baixos "
+                         "na abertura) e apaga o que voce acabou de mandar antes "
+                         "de dar tempo de olhar — use --hold pra testar de verdade.")
     p.set_defaults(func=cmd_send)
 
     args = ap.parse_args()

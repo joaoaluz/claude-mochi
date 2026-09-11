@@ -1,5 +1,5 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1180 1740" width="1180" height="1740" font-family="ui-sans-serif, system-ui, -apple-system, Segoe UI, Helvetica, Arial, sans-serif">
-<rect width="1180" height="1740" fill="#14110f"/>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1180 2135" width="1180" height="2135" font-family="ui-sans-serif, system-ui, -apple-system, Segoe UI, Helvetica, Arial, sans-serif">
+<rect width="1180" height="2135" fill="#14110f"/>
 <text x="60" y="72" fill="#f4f1ea" font-size="34" font-weight="700">claude-mochi — o que aparece na tela</text>
 <text x="60" y="102" fill="#8b857c" font-size="15">ST7789 240×240 · desenhos em escala 1:1 com as constantes de firmware/claude_mochi/claude_mochi.ino</text>
 <line x1="60" y1="124" x2="1120" y2="124" stroke="#2b2722" stroke-width="1"/>
@@ -8,73 +8,73 @@
 <text x="60" y="216" fill="#8b857c" font-family="ui-sans-serif, system-ui, -apple-system, Segoe UI, Helvetica, Arial, sans-serif" font-size="14">openTarget = 1 − 0,72 × valor/100 · a íris vai de verde a vermelho · olho e barra escolhem a métrica em OLHOS_METRICA / BARRA_METRICA</text>
 <g transform="translate(60.0,248) scale(0.8)">
 <rect x="-6" y="-6" width="252" height="252" rx="14" fill="#000" stroke="#3a342e" stroke-width="2"/>
-<rect width="240" height="240" fill="#f7e3e7"/>
-<ellipse cx="78" cy="104" rx="30" ry="34" fill="#181c18"/>
-<ellipse cx="78" cy="104" rx="16" ry="18" fill="#29d342"/>
-<circle cx="68" cy="87" r="4" fill="#ffffff"/>
-<ellipse cx="162" cy="104" rx="30" ry="34" fill="#181c18"/>
-<ellipse cx="162" cy="104" rx="16" ry="18" fill="#29d342"/>
-<circle cx="152" cy="87" r="4" fill="#ffffff"/>
-<rect x="34" y="206" width="172" height="10" rx="5" fill="#e7e3e7"/>
+<rect width="240" height="240" fill="#ff6531"/>
+<ellipse cx="72" cy="104" rx="36" ry="42" fill="#181c18"/>
+<ellipse cx="72" cy="104" rx="19" ry="23" fill="#29d342"/>
+<circle cx="60" cy="83" r="5" fill="#ffffff"/>
+<ellipse cx="168" cy="104" rx="36" ry="42" fill="#181c18"/>
+<ellipse cx="168" cy="104" rx="19" ry="23" fill="#29d342"/>
+<circle cx="156" cy="83" r="5" fill="#ffffff"/>
+<rect x="34" y="206" width="172" height="10" rx="5" fill="#8c4921"/>
 </g>
 <text x="156.0" y="470.0" text-anchor="middle" fill="#f4f1ea" font-family="ui-sans-serif, system-ui, -apple-system, Segoe UI, Helvetica, Arial, sans-serif" font-size="15" font-weight="600">0%</text>
-<text x="156.0" y="490.0" text-anchor="middle" fill="#8b857c" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="12.5">olho 34px de 34</text>
+<text x="156.0" y="490.0" text-anchor="middle" fill="#8b857c" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="12.5">olho 42px de 42</text>
 <text x="156.0" y="507.0" text-anchor="middle" fill="#8b857c" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="12.5">íris #29d342</text>
 <text x="156.0" y="524.0" text-anchor="middle" fill="#8b857c" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="12.5">barra 0%</text>
 <g transform="translate(276.0,248) scale(0.8)">
 <rect x="-6" y="-6" width="252" height="252" rx="14" fill="#000" stroke="#3a342e" stroke-width="2"/>
-<rect width="240" height="240" fill="#f7e3e7"/>
-<ellipse cx="78" cy="104" rx="30" ry="26" fill="#181c18"/>
-<ellipse cx="78" cy="104" rx="16" ry="14" fill="#94b621"/>
-<circle cx="68" cy="91" r="4" fill="#ffffff"/>
-<ellipse cx="162" cy="104" rx="30" ry="26" fill="#181c18"/>
-<ellipse cx="162" cy="104" rx="16" ry="14" fill="#94b621"/>
-<circle cx="152" cy="91" r="4" fill="#ffffff"/>
-<rect x="34" y="206" width="172" height="10" rx="5" fill="#e7e3e7"/>
+<rect width="240" height="240" fill="#ff6531"/>
+<ellipse cx="72" cy="104" rx="36" ry="32" fill="#181c18"/>
+<ellipse cx="72" cy="104" rx="19" ry="17" fill="#94b621"/>
+<circle cx="60" cy="88" r="5" fill="#ffffff"/>
+<ellipse cx="168" cy="104" rx="36" ry="32" fill="#181c18"/>
+<ellipse cx="168" cy="104" rx="19" ry="17" fill="#94b621"/>
+<circle cx="156" cy="88" r="5" fill="#ffffff"/>
+<rect x="34" y="206" width="172" height="10" rx="5" fill="#8c4921"/>
 <rect x="34" y="206" width="51" height="10" rx="5" fill="#94b621"/>
 </g>
 <text x="372.0" y="470.0" text-anchor="middle" fill="#f4f1ea" font-family="ui-sans-serif, system-ui, -apple-system, Segoe UI, Helvetica, Arial, sans-serif" font-size="15" font-weight="600">30%</text>
-<text x="372.0" y="490.0" text-anchor="middle" fill="#8b857c" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="12.5">olho 26px de 34</text>
+<text x="372.0" y="490.0" text-anchor="middle" fill="#8b857c" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="12.5">olho 32px de 42</text>
 <text x="372.0" y="507.0" text-anchor="middle" fill="#8b857c" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="12.5">íris #94b621</text>
 <text x="372.0" y="524.0" text-anchor="middle" fill="#8b857c" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="12.5">barra 30%</text>
 <g transform="translate(492.0,248) scale(0.8)">
 <rect x="-6" y="-6" width="252" height="252" rx="14" fill="#000" stroke="#3a342e" stroke-width="2"/>
-<rect width="240" height="240" fill="#f7e3e7"/>
-<ellipse cx="78" cy="104" rx="30" ry="19" fill="#181c18"/>
-<ellipse cx="78" cy="104" rx="16" ry="10" fill="#ff9600"/>
-<circle cx="68" cy="95" r="4" fill="#ffffff"/>
-<ellipse cx="162" cy="104" rx="30" ry="19" fill="#181c18"/>
-<ellipse cx="162" cy="104" rx="16" ry="10" fill="#ff9600"/>
-<circle cx="152" cy="95" r="4" fill="#ffffff"/>
-<rect x="34" y="206" width="172" height="10" rx="5" fill="#e7e3e7"/>
+<rect width="240" height="240" fill="#ff6531"/>
+<ellipse cx="72" cy="104" rx="36" ry="23" fill="#181c18"/>
+<ellipse cx="72" cy="104" rx="19" ry="12" fill="#ff9600"/>
+<circle cx="60" cy="93" r="5" fill="#ffffff"/>
+<ellipse cx="168" cy="104" rx="36" ry="23" fill="#181c18"/>
+<ellipse cx="168" cy="104" rx="19" ry="12" fill="#ff9600"/>
+<circle cx="156" cy="93" r="5" fill="#ffffff"/>
+<rect x="34" y="206" width="172" height="10" rx="5" fill="#8c4921"/>
 <rect x="34" y="206" width="103" height="10" rx="5" fill="#ff9600"/>
 </g>
 <text x="588.0" y="470.0" text-anchor="middle" fill="#f4f1ea" font-family="ui-sans-serif, system-ui, -apple-system, Segoe UI, Helvetica, Arial, sans-serif" font-size="15" font-weight="600">60%</text>
-<text x="588.0" y="490.0" text-anchor="middle" fill="#8b857c" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="12.5">olho 19px de 34</text>
+<text x="588.0" y="490.0" text-anchor="middle" fill="#8b857c" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="12.5">olho 23px de 42</text>
 <text x="588.0" y="507.0" text-anchor="middle" fill="#8b857c" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="12.5">íris #ff9600</text>
 <text x="588.0" y="524.0" text-anchor="middle" fill="#8b857c" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="12.5">barra 60%</text>
 <g transform="translate(708.0,248) scale(0.8)">
 <rect x="-6" y="-6" width="252" height="252" rx="14" fill="#000" stroke="#3a342e" stroke-width="2"/>
-<rect width="240" height="240" fill="#f7e3e7"/>
-<ellipse cx="78" cy="104" rx="30" ry="13" fill="#181c18"/>
-<ellipse cx="78" cy="104" rx="16" ry="7" fill="#f74508"/>
-<ellipse cx="162" cy="104" rx="30" ry="13" fill="#181c18"/>
-<ellipse cx="162" cy="104" rx="16" ry="7" fill="#f74508"/>
-<rect x="34" y="206" width="172" height="10" rx="5" fill="#e7e3e7"/>
+<rect width="240" height="240" fill="#ff6531"/>
+<ellipse cx="72" cy="104" rx="36" ry="16" fill="#181c18"/>
+<ellipse cx="72" cy="104" rx="19" ry="8" fill="#f74508"/>
+<ellipse cx="168" cy="104" rx="36" ry="16" fill="#181c18"/>
+<ellipse cx="168" cy="104" rx="19" ry="8" fill="#f74508"/>
+<rect x="34" y="206" width="172" height="10" rx="5" fill="#8c4921"/>
 <rect x="34" y="206" width="146" height="10" rx="5" fill="#f74508"/>
 </g>
 <text x="804.0" y="470.0" text-anchor="middle" fill="#f4f1ea" font-family="ui-sans-serif, system-ui, -apple-system, Segoe UI, Helvetica, Arial, sans-serif" font-size="15" font-weight="600">85%</text>
-<text x="804.0" y="490.0" text-anchor="middle" fill="#8b857c" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="12.5">olho 13px de 34</text>
+<text x="804.0" y="490.0" text-anchor="middle" fill="#8b857c" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="12.5">olho 16px de 42</text>
 <text x="804.0" y="507.0" text-anchor="middle" fill="#8b857c" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="12.5">íris #f74508</text>
 <text x="804.0" y="524.0" text-anchor="middle" fill="#8b857c" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="12.5">barra 85%</text>
 <g transform="translate(924.0,248) scale(0.8)">
 <rect x="-6" y="-6" width="252" height="252" rx="14" fill="#000" stroke="#d97757" stroke-width="2"/>
-<rect width="240" height="240" fill="#f7e3e7"/>
-<line x1="56" y1="82" x2="100" y2="126" stroke="#181c18" stroke-width="5" stroke-linecap="round"/>
-<line x1="56" y1="126" x2="100" y2="82" stroke="#181c18" stroke-width="5" stroke-linecap="round"/>
-<line x1="140" y1="82" x2="184" y2="126" stroke="#181c18" stroke-width="5" stroke-linecap="round"/>
-<line x1="140" y1="126" x2="184" y2="82" stroke="#181c18" stroke-width="5" stroke-linecap="round"/>
-<rect x="34" y="206" width="172" height="10" rx="5" fill="#e7e3e7"/>
+<rect width="240" height="240" fill="#ff6531"/>
+<line x1="44" y1="76" x2="100" y2="132" stroke="#181c18" stroke-width="5" stroke-linecap="round"/>
+<line x1="44" y1="132" x2="100" y2="76" stroke="#181c18" stroke-width="5" stroke-linecap="round"/>
+<line x1="140" y1="76" x2="196" y2="132" stroke="#181c18" stroke-width="5" stroke-linecap="round"/>
+<line x1="140" y1="132" x2="196" y2="76" stroke="#181c18" stroke-width="5" stroke-linecap="round"/>
+<rect x="34" y="206" width="172" height="10" rx="5" fill="#8c4921"/>
 <rect x="34" y="206" width="165" height="10" rx="5" fill="#ef2410"/>
 </g>
 <text x="1020.0" y="470.0" text-anchor="middle" fill="#f4f1ea" font-family="ui-sans-serif, system-ui, -apple-system, Segoe UI, Helvetica, Arial, sans-serif" font-size="15" font-weight="600">96%</text>
@@ -83,25 +83,25 @@
 <text x="1020.0" y="524.0" text-anchor="middle" fill="#8b857c" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="12.5">barra 96%</text>
 <text x="60" y="566" fill="#d97757" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="13" letter-spacing="2">02</text>
 <text x="60" y="592" fill="#f4f1ea" font-family="ui-sans-serif, system-ui, -apple-system, Segoe UI, Helvetica, Arial, sans-serif" font-size="21" font-weight="600">Estados que não vêm do número</text>
-<text x="60" y="614" fill="#8b857c" font-family="ui-sans-serif, system-ui, -apple-system, Segoe UI, Helvetica, Arial, sans-serif" font-size="14">piscar é local (mais rápido quando state=busy) · dormir é a ausência de notícias do PC por 30 s</text>
+<text x="60" y="614" fill="#8b857c" font-family="ui-sans-serif, system-ui, -apple-system, Segoe UI, Helvetica, Arial, sans-serif" font-size="14">piscar é local e num ritmo só — quem diz «trabalhando» é o clawd da seção 03 · dormir é a ausência de notícias do PC por 30 s</text>
 <g transform="translate(60.0,646) scale(0.8)">
 <rect x="-6" y="-6" width="252" height="252" rx="14" fill="#000" stroke="#3a342e" stroke-width="2"/>
-<rect width="240" height="240" fill="#f7e3e7"/>
-<rect x="48" y="102" width="60" height="5" rx="2" fill="#181c18"/>
-<rect x="132" y="102" width="60" height="5" rx="2" fill="#181c18"/>
-<rect x="34" y="206" width="172" height="10" rx="5" fill="#e7e3e7"/>
+<rect width="240" height="240" fill="#ff6531"/>
+<rect x="36" y="102" width="72" height="5" rx="2" fill="#181c18"/>
+<rect x="132" y="102" width="72" height="5" rx="2" fill="#181c18"/>
+<rect x="34" y="206" width="172" height="10" rx="5" fill="#8c4921"/>
 <rect x="34" y="206" width="48" height="10" rx="5" fill="#8cb629"/>
 </g>
 <text x="156.0" y="868.0" text-anchor="middle" fill="#f4f1ea" font-family="ui-sans-serif, system-ui, -apple-system, Segoe UI, Helvetica, Arial, sans-serif" font-size="15" font-weight="600">piscando</text>
 <text x="156.0" y="888.0" text-anchor="middle" fill="#8b857c" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="12.5">openTarget = 0 por 110 ms</text>
-<text x="156.0" y="905.0" text-anchor="middle" fill="#8b857c" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="12.5">state=busy → 0,9–2,0 s</text>
-<text x="156.0" y="922.0" text-anchor="middle" fill="#8b857c" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="12.5">state=idle → 2,8–6,0 s</text>
+<text x="156.0" y="905.0" text-anchor="middle" fill="#8b857c" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="12.5">volta em 2,8–6,0 s</text>
+<text x="156.0" y="922.0" text-anchor="middle" fill="#8b857c" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="12.5">independe de state</text>
 <g transform="translate(276.0,646) scale(0.8)">
 <rect x="-6" y="-6" width="252" height="252" rx="14" fill="#000" stroke="#3a342e" stroke-width="2"/>
-<rect width="240" height="240" fill="#f7e3e7"/>
-<rect x="52" y="102" width="52" height="5" rx="2" fill="#d6d3d6"/>
-<rect x="136" y="102" width="52" height="5" rx="2" fill="#d6d3d6"/>
-<rect x="34" y="206" width="172" height="10" rx="5" fill="#e7e3e7"/>
+<rect width="240" height="240" fill="#ff6531"/>
+<rect x="40" y="102" width="64" height="5" rx="2" fill="#d6d3d6"/>
+<rect x="136" y="102" width="64" height="5" rx="2" fill="#d6d3d6"/>
+<rect x="34" y="206" width="172" height="10" rx="5" fill="#8c4921"/>
 </g>
 <text x="372.0" y="868.0" text-anchor="middle" fill="#f4f1ea" font-family="ui-sans-serif, system-ui, -apple-system, Segoe UI, Helvetica, Arial, sans-serif" font-size="15" font-weight="600">dormindo</text>
 <text x="372.0" y="888.0" text-anchor="middle" fill="#8b857c" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="12.5">sem ping há 30 s</text>
@@ -109,12 +109,12 @@
 <text x="372.0" y="922.0" text-anchor="middle" fill="#8b857c" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="12.5">volta sozinho ao 1º ping</text>
 <g transform="translate(492.0,646) scale(0.8)">
 <rect x="-6" y="-6" width="252" height="252" rx="14" fill="#000" stroke="#3a342e" stroke-width="2"/>
-<rect width="240" height="240" fill="#f7e3e7"/>
-<line x1="56" y1="82" x2="100" y2="126" stroke="#181c18" stroke-width="5" stroke-linecap="round"/>
-<line x1="56" y1="126" x2="100" y2="82" stroke="#181c18" stroke-width="5" stroke-linecap="round"/>
-<line x1="140" y1="82" x2="184" y2="126" stroke="#181c18" stroke-width="5" stroke-linecap="round"/>
-<line x1="140" y1="126" x2="184" y2="82" stroke="#181c18" stroke-width="5" stroke-linecap="round"/>
-<rect x="34" y="206" width="172" height="10" rx="5" fill="#e7e3e7"/>
+<rect width="240" height="240" fill="#ff6531"/>
+<line x1="44" y1="76" x2="100" y2="132" stroke="#181c18" stroke-width="5" stroke-linecap="round"/>
+<line x1="44" y1="132" x2="100" y2="76" stroke="#181c18" stroke-width="5" stroke-linecap="round"/>
+<line x1="140" y1="76" x2="196" y2="132" stroke="#181c18" stroke-width="5" stroke-linecap="round"/>
+<line x1="140" y1="132" x2="196" y2="76" stroke="#181c18" stroke-width="5" stroke-linecap="round"/>
+<rect x="34" y="206" width="172" height="10" rx="5" fill="#8c4921"/>
 <rect x="34" y="206" width="108" height="10" rx="5" fill="#ff8e00"/>
 </g>
 <text x="588.0" y="868.0" text-anchor="middle" fill="#f4f1ea" font-family="ui-sans-serif, system-ui, -apple-system, Segoe UI, Helvetica, Arial, sans-serif" font-size="15" font-weight="600">compactando</text>
@@ -229,128 +229,450 @@
 <text x="868.0" y="740" fill="#8b857c" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="12">60</text>
 <text x="928.0" y="740" fill="#8b857c" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="12">85</text>
 <text x="964.0" y="740" fill="#8b857c" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="12">100</text>
-<text x="724.0" y="780" fill="#8b857c" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="12.5">olho&#160;aberto&#160;&#160;&#160;&#160;&#160;&#160;34 px em 0% → 9 px em 100%</text>
-<text x="724.0" y="802" fill="#8b857c" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="12.5">centro&#160;dos&#160;olhos&#160;(78,104) e (162,104), rx 30</text>
+<text x="724.0" y="780" fill="#8b857c" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="12.5">olho&#160;aberto&#160;&#160;&#160;&#160;&#160;&#160;42 px em 0% → 11 px em 100%</text>
+<text x="724.0" y="802" fill="#8b857c" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="12.5">centro&#160;dos&#160;olhos&#160;(72,104) e (168,104), rx 36</text>
 <text x="724.0" y="824" fill="#8b857c" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="12.5">barra&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;x 34 y 206 · 172×10 px</text>
-<text x="724.0" y="846" fill="#8b857c" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="12.5">fundo&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;#f7e3e7 — o rosto do mochi</text>
+<text x="724.0" y="846" fill="#8b857c" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="12.5">fundo&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;#ff6531 — o rosto do mochi</text>
 <text x="60" y="975" fill="#d97757" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="13" letter-spacing="2">03</text>
-<text x="60" y="1001" fill="#f4f1ea" font-family="ui-sans-serif, system-ui, -apple-system, Segoe UI, Helvetica, Arial, sans-serif" font-size="21" font-weight="600">Proposta: expressões vindas dos hooks</text>
-<text x="60" y="1023" fill="#8b857c" font-family="ui-sans-serif, system-ui, -apple-system, Segoe UI, Helvetica, Arial, sans-serif" font-size="14">o que ainda não existe no firmware — cada rosto usa só primitivas do Adafruit_GFX</text>
-<g transform="translate(60.0,1050) scale(0.75)">
+<text x="60" y="1001" fill="#f4f1ea" font-family="ui-sans-serif, system-ui, -apple-system, Segoe UI, Helvetica, Arial, sans-serif" font-size="21" font-weight="600">Trabalhando: o clawd anda na barra</text>
+<text x="60" y="1023" fill="#8b857c" font-family="ui-sans-serif, system-ui, -apple-system, Segoe UI, Helvetica, Arial, sans-serif" font-size="14">state=busy · um passo de 4 px a cada 80 ms, de ponta a ponta da barra · na ponta ele acena e volta · some quando o mochi cochila</text>
+<g transform="translate(60,1050) scale(0.8)">
+<rect x="-6" y="-6" width="252" height="252" rx="14" fill="#000" stroke="#3a342e" stroke-width="2"/>
+<rect width="240" height="240" fill="#ff6531"/>
+<ellipse cx="72" cy="104" rx="36" ry="22" fill="#181c18"/>
+<ellipse cx="72" cy="104" rx="19" ry="12" fill="#ff8e00"/>
+<circle cx="60" cy="93" r="5" fill="#ffffff"/>
+<ellipse cx="168" cy="104" rx="36" ry="22" fill="#181c18"/>
+<ellipse cx="168" cy="104" rx="19" ry="12" fill="#ff8e00"/>
+<circle cx="156" cy="93" r="5" fill="#ffffff"/>
+<rect x="34" y="206" width="172" height="10" rx="5" fill="#8c4921"/>
+<rect x="34" y="206" width="108" height="10" rx="5" fill="#ff8e00"/>
+<rect x="108" y="178" width="24" height="1" fill="#181c18"/>
+<rect x="107" y="179" width="26" height="1" fill="#181c18"/>
+<rect x="107" y="180" width="26" height="1" fill="#181c18"/>
+<rect x="107" y="181" width="26" height="1" fill="#181c18"/>
+<rect x="107" y="182" width="26" height="1" fill="#181c18"/>
+<rect x="107" y="183" width="5" height="1" fill="#181c18"/>
+<rect x="112" y="183" width="5" height="1" fill="#ffffff"/>
+<rect x="117" y="183" width="6" height="1" fill="#181c18"/>
+<rect x="123" y="183" width="5" height="1" fill="#ffffff"/>
+<rect x="128" y="183" width="5" height="1" fill="#181c18"/>
+<rect x="107" y="184" width="5" height="1" fill="#181c18"/>
+<rect x="112" y="184" width="5" height="1" fill="#ffffff"/>
+<rect x="117" y="184" width="6" height="1" fill="#181c18"/>
+<rect x="123" y="184" width="5" height="1" fill="#ffffff"/>
+<rect x="128" y="184" width="5" height="1" fill="#181c18"/>
+<rect x="104" y="185" width="8" height="1" fill="#181c18"/>
+<rect x="112" y="185" width="5" height="1" fill="#ffffff"/>
+<rect x="117" y="185" width="6" height="1" fill="#181c18"/>
+<rect x="123" y="185" width="5" height="1" fill="#ffffff"/>
+<rect x="128" y="185" width="8" height="1" fill="#181c18"/>
+<rect x="104" y="186" width="8" height="1" fill="#181c18"/>
+<rect x="112" y="186" width="5" height="1" fill="#ffffff"/>
+<rect x="117" y="186" width="6" height="1" fill="#181c18"/>
+<rect x="123" y="186" width="5" height="1" fill="#ffffff"/>
+<rect x="128" y="186" width="8" height="1" fill="#181c18"/>
+<rect x="104" y="187" width="8" height="1" fill="#181c18"/>
+<rect x="112" y="187" width="5" height="1" fill="#ffffff"/>
+<rect x="117" y="187" width="6" height="1" fill="#181c18"/>
+<rect x="123" y="187" width="5" height="1" fill="#ffffff"/>
+<rect x="128" y="187" width="8" height="1" fill="#181c18"/>
+<rect x="104" y="188" width="32" height="1" fill="#181c18"/>
+<rect x="104" y="189" width="32" height="1" fill="#181c18"/>
+<rect x="107" y="190" width="26" height="1" fill="#181c18"/>
+<rect x="107" y="191" width="26" height="1" fill="#181c18"/>
+<rect x="107" y="192" width="26" height="1" fill="#181c18"/>
+<rect x="107" y="193" width="26" height="1" fill="#181c18"/>
+<rect x="107" y="194" width="26" height="1" fill="#181c18"/>
+<rect x="107" y="195" width="26" height="1" fill="#181c18"/>
+<rect x="107" y="196" width="26" height="1" fill="#181c18"/>
+<rect x="108" y="197" width="24" height="1" fill="#181c18"/>
+<rect x="109" y="198" width="4" height="1" fill="#181c18"/>
+<rect x="115" y="198" width="4" height="1" fill="#181c18"/>
+<rect x="121" y="198" width="4" height="1" fill="#181c18"/>
+<rect x="127" y="198" width="4" height="1" fill="#181c18"/>
+<rect x="109" y="199" width="4" height="1" fill="#181c18"/>
+<rect x="115" y="199" width="4" height="1" fill="#181c18"/>
+<rect x="121" y="199" width="4" height="1" fill="#181c18"/>
+<rect x="127" y="199" width="4" height="1" fill="#181c18"/>
+<rect x="109" y="200" width="4" height="1" fill="#181c18"/>
+<rect x="115" y="200" width="4" height="1" fill="#181c18"/>
+<rect x="121" y="200" width="4" height="1" fill="#181c18"/>
+<rect x="127" y="200" width="4" height="1" fill="#181c18"/>
+<rect x="109" y="201" width="4" height="1" fill="#181c18"/>
+<rect x="115" y="201" width="4" height="1" fill="#181c18"/>
+<rect x="121" y="201" width="4" height="1" fill="#181c18"/>
+<rect x="127" y="201" width="4" height="1" fill="#181c18"/>
+<rect x="109" y="202" width="4" height="1" fill="#181c18"/>
+<rect x="115" y="202" width="4" height="1" fill="#181c18"/>
+<rect x="121" y="202" width="4" height="1" fill="#181c18"/>
+<rect x="127" y="202" width="4" height="1" fill="#181c18"/>
+<rect x="109" y="203" width="4" height="1" fill="#181c18"/>
+<rect x="121" y="203" width="4" height="1" fill="#181c18"/>
+<rect x="109" y="204" width="4" height="1" fill="#181c18"/>
+<rect x="121" y="204" width="4" height="1" fill="#181c18"/>
+</g>
+<text x="156.0" y="1272.0" text-anchor="middle" fill="#f4f1ea" font-family="ui-sans-serif, system-ui, -apple-system, Segoe UI, Helvetica, Arial, sans-serif" font-size="15" font-weight="600">state=busy</text>
+<text x="156.0" y="1292.0" text-anchor="middle" fill="#8b857c" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="12.5">passo de 4 px / 80 ms</text>
+<text x="156.0" y="1309.0" text-anchor="middle" fill="#8b857c" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="12.5">sprite 32×30 px, x de 34 a 174</text>
+<text x="156.0" y="1326.0" text-anchor="middle" fill="#8b857c" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="12.5">olhos seguem a cota, não o modo</text>
+<text x="330" y="1046" fill="#f4f1ea" font-size="15" font-weight="600">As poses, 5×</text>
+<rect x="328" y="1060" width="164" height="154" rx="6" fill="#ff6531" stroke="#3a342e"/>
+<g transform="translate(330,1062) scale(5) translate(-34,-176)">
+<rect x="38" y="179" width="24" height="1" fill="#181c18"/>
+<rect x="37" y="180" width="26" height="1" fill="#181c18"/>
+<rect x="37" y="181" width="26" height="1" fill="#181c18"/>
+<rect x="37" y="182" width="26" height="1" fill="#181c18"/>
+<rect x="37" y="183" width="26" height="1" fill="#181c18"/>
+<rect x="37" y="184" width="5" height="1" fill="#181c18"/>
+<rect x="42" y="184" width="5" height="1" fill="#ffffff"/>
+<rect x="47" y="184" width="6" height="1" fill="#181c18"/>
+<rect x="53" y="184" width="5" height="1" fill="#ffffff"/>
+<rect x="58" y="184" width="5" height="1" fill="#181c18"/>
+<rect x="37" y="185" width="5" height="1" fill="#181c18"/>
+<rect x="42" y="185" width="5" height="1" fill="#ffffff"/>
+<rect x="47" y="185" width="6" height="1" fill="#181c18"/>
+<rect x="53" y="185" width="5" height="1" fill="#ffffff"/>
+<rect x="58" y="185" width="5" height="1" fill="#181c18"/>
+<rect x="34" y="186" width="8" height="1" fill="#181c18"/>
+<rect x="42" y="186" width="5" height="1" fill="#ffffff"/>
+<rect x="47" y="186" width="6" height="1" fill="#181c18"/>
+<rect x="53" y="186" width="5" height="1" fill="#ffffff"/>
+<rect x="58" y="186" width="8" height="1" fill="#181c18"/>
+<rect x="34" y="187" width="8" height="1" fill="#181c18"/>
+<rect x="42" y="187" width="5" height="1" fill="#ffffff"/>
+<rect x="47" y="187" width="6" height="1" fill="#181c18"/>
+<rect x="53" y="187" width="5" height="1" fill="#ffffff"/>
+<rect x="58" y="187" width="8" height="1" fill="#181c18"/>
+<rect x="34" y="188" width="8" height="1" fill="#181c18"/>
+<rect x="42" y="188" width="5" height="1" fill="#ffffff"/>
+<rect x="47" y="188" width="6" height="1" fill="#181c18"/>
+<rect x="53" y="188" width="5" height="1" fill="#ffffff"/>
+<rect x="58" y="188" width="8" height="1" fill="#181c18"/>
+<rect x="34" y="189" width="32" height="1" fill="#181c18"/>
+<rect x="34" y="190" width="32" height="1" fill="#181c18"/>
+<rect x="37" y="191" width="26" height="1" fill="#181c18"/>
+<rect x="37" y="192" width="26" height="1" fill="#181c18"/>
+<rect x="37" y="193" width="26" height="1" fill="#181c18"/>
+<rect x="37" y="194" width="26" height="1" fill="#181c18"/>
+<rect x="37" y="195" width="26" height="1" fill="#181c18"/>
+<rect x="37" y="196" width="26" height="1" fill="#181c18"/>
+<rect x="37" y="197" width="26" height="1" fill="#181c18"/>
+<rect x="38" y="198" width="24" height="1" fill="#181c18"/>
+<rect x="39" y="199" width="4" height="1" fill="#181c18"/>
+<rect x="45" y="199" width="4" height="1" fill="#181c18"/>
+<rect x="51" y="199" width="4" height="1" fill="#181c18"/>
+<rect x="57" y="199" width="4" height="1" fill="#181c18"/>
+<rect x="39" y="200" width="4" height="1" fill="#181c18"/>
+<rect x="45" y="200" width="4" height="1" fill="#181c18"/>
+<rect x="51" y="200" width="4" height="1" fill="#181c18"/>
+<rect x="57" y="200" width="4" height="1" fill="#181c18"/>
+<rect x="39" y="201" width="4" height="1" fill="#181c18"/>
+<rect x="45" y="201" width="4" height="1" fill="#181c18"/>
+<rect x="51" y="201" width="4" height="1" fill="#181c18"/>
+<rect x="57" y="201" width="4" height="1" fill="#181c18"/>
+<rect x="39" y="202" width="4" height="1" fill="#181c18"/>
+<rect x="45" y="202" width="4" height="1" fill="#181c18"/>
+<rect x="51" y="202" width="4" height="1" fill="#181c18"/>
+<rect x="57" y="202" width="4" height="1" fill="#181c18"/>
+<rect x="39" y="203" width="4" height="1" fill="#181c18"/>
+<rect x="45" y="203" width="4" height="1" fill="#181c18"/>
+<rect x="51" y="203" width="4" height="1" fill="#181c18"/>
+<rect x="57" y="203" width="4" height="1" fill="#181c18"/>
+<rect x="39" y="204" width="4" height="1" fill="#181c18"/>
+<rect x="51" y="204" width="4" height="1" fill="#181c18"/>
+<rect x="39" y="205" width="4" height="1" fill="#181c18"/>
+<rect x="51" y="205" width="4" height="1" fill="#181c18"/>
+</g>
+<rect x="330" y="1212" width="160" height="5" fill="#ff8e00"/>
+<text x="410.0" y="1242" text-anchor="middle" fill="#8b857c" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="12.5">anda_a</text>
+<rect x="508" y="1060" width="164" height="154" rx="6" fill="#ff6531" stroke="#3a342e"/>
+<g transform="translate(510,1062) scale(5) translate(-34,-176)">
+<rect x="38" y="178" width="24" height="1" fill="#181c18"/>
+<rect x="37" y="179" width="26" height="1" fill="#181c18"/>
+<rect x="37" y="180" width="26" height="1" fill="#181c18"/>
+<rect x="37" y="181" width="26" height="1" fill="#181c18"/>
+<rect x="37" y="182" width="26" height="1" fill="#181c18"/>
+<rect x="37" y="183" width="5" height="1" fill="#181c18"/>
+<rect x="42" y="183" width="5" height="1" fill="#ffffff"/>
+<rect x="47" y="183" width="6" height="1" fill="#181c18"/>
+<rect x="53" y="183" width="5" height="1" fill="#ffffff"/>
+<rect x="58" y="183" width="5" height="1" fill="#181c18"/>
+<rect x="37" y="184" width="5" height="1" fill="#181c18"/>
+<rect x="42" y="184" width="5" height="1" fill="#ffffff"/>
+<rect x="47" y="184" width="6" height="1" fill="#181c18"/>
+<rect x="53" y="184" width="5" height="1" fill="#ffffff"/>
+<rect x="58" y="184" width="5" height="1" fill="#181c18"/>
+<rect x="34" y="185" width="8" height="1" fill="#181c18"/>
+<rect x="42" y="185" width="5" height="1" fill="#ffffff"/>
+<rect x="47" y="185" width="6" height="1" fill="#181c18"/>
+<rect x="53" y="185" width="5" height="1" fill="#ffffff"/>
+<rect x="58" y="185" width="8" height="1" fill="#181c18"/>
+<rect x="34" y="186" width="8" height="1" fill="#181c18"/>
+<rect x="42" y="186" width="5" height="1" fill="#ffffff"/>
+<rect x="47" y="186" width="6" height="1" fill="#181c18"/>
+<rect x="53" y="186" width="5" height="1" fill="#ffffff"/>
+<rect x="58" y="186" width="8" height="1" fill="#181c18"/>
+<rect x="34" y="187" width="8" height="1" fill="#181c18"/>
+<rect x="42" y="187" width="5" height="1" fill="#ffffff"/>
+<rect x="47" y="187" width="6" height="1" fill="#181c18"/>
+<rect x="53" y="187" width="5" height="1" fill="#ffffff"/>
+<rect x="58" y="187" width="8" height="1" fill="#181c18"/>
+<rect x="34" y="188" width="32" height="1" fill="#181c18"/>
+<rect x="34" y="189" width="32" height="1" fill="#181c18"/>
+<rect x="37" y="190" width="26" height="1" fill="#181c18"/>
+<rect x="37" y="191" width="26" height="1" fill="#181c18"/>
+<rect x="37" y="192" width="26" height="1" fill="#181c18"/>
+<rect x="37" y="193" width="26" height="1" fill="#181c18"/>
+<rect x="37" y="194" width="26" height="1" fill="#181c18"/>
+<rect x="37" y="195" width="26" height="1" fill="#181c18"/>
+<rect x="37" y="196" width="26" height="1" fill="#181c18"/>
+<rect x="38" y="197" width="24" height="1" fill="#181c18"/>
+<rect x="39" y="198" width="4" height="1" fill="#181c18"/>
+<rect x="45" y="198" width="4" height="1" fill="#181c18"/>
+<rect x="51" y="198" width="4" height="1" fill="#181c18"/>
+<rect x="57" y="198" width="4" height="1" fill="#181c18"/>
+<rect x="39" y="199" width="4" height="1" fill="#181c18"/>
+<rect x="45" y="199" width="4" height="1" fill="#181c18"/>
+<rect x="51" y="199" width="4" height="1" fill="#181c18"/>
+<rect x="57" y="199" width="4" height="1" fill="#181c18"/>
+<rect x="39" y="200" width="4" height="1" fill="#181c18"/>
+<rect x="45" y="200" width="4" height="1" fill="#181c18"/>
+<rect x="51" y="200" width="4" height="1" fill="#181c18"/>
+<rect x="57" y="200" width="4" height="1" fill="#181c18"/>
+<rect x="39" y="201" width="4" height="1" fill="#181c18"/>
+<rect x="45" y="201" width="4" height="1" fill="#181c18"/>
+<rect x="51" y="201" width="4" height="1" fill="#181c18"/>
+<rect x="57" y="201" width="4" height="1" fill="#181c18"/>
+<rect x="39" y="202" width="4" height="1" fill="#181c18"/>
+<rect x="45" y="202" width="4" height="1" fill="#181c18"/>
+<rect x="51" y="202" width="4" height="1" fill="#181c18"/>
+<rect x="57" y="202" width="4" height="1" fill="#181c18"/>
+<rect x="39" y="203" width="4" height="1" fill="#181c18"/>
+<rect x="45" y="203" width="4" height="1" fill="#181c18"/>
+<rect x="51" y="203" width="4" height="1" fill="#181c18"/>
+<rect x="57" y="203" width="4" height="1" fill="#181c18"/>
+<rect x="45" y="204" width="4" height="1" fill="#181c18"/>
+<rect x="57" y="204" width="4" height="1" fill="#181c18"/>
+<rect x="45" y="205" width="4" height="1" fill="#181c18"/>
+<rect x="57" y="205" width="4" height="1" fill="#181c18"/>
+</g>
+<rect x="510" y="1212" width="160" height="5" fill="#ff8e00"/>
+<text x="590.0" y="1242" text-anchor="middle" fill="#8b857c" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="12.5">anda_b</text>
+<rect x="688" y="1060" width="164" height="154" rx="6" fill="#ff6531" stroke="#3a342e"/>
+<g transform="translate(690,1062) scale(5) translate(-34,-176)">
+<rect x="62" y="176" width="3" height="1" fill="#181c18"/>
+<rect x="62" y="177" width="3" height="1" fill="#181c18"/>
+<rect x="62" y="178" width="3" height="1" fill="#181c18"/>
+<rect x="38" y="179" width="27" height="1" fill="#181c18"/>
+<rect x="37" y="180" width="28" height="1" fill="#181c18"/>
+<rect x="37" y="181" width="28" height="1" fill="#181c18"/>
+<rect x="37" y="182" width="28" height="1" fill="#181c18"/>
+<rect x="37" y="183" width="28" height="1" fill="#181c18"/>
+<rect x="37" y="184" width="5" height="1" fill="#181c18"/>
+<rect x="42" y="184" width="5" height="1" fill="#ffffff"/>
+<rect x="47" y="184" width="6" height="1" fill="#181c18"/>
+<rect x="53" y="184" width="5" height="1" fill="#ffffff"/>
+<rect x="58" y="184" width="7" height="1" fill="#181c18"/>
+<rect x="37" y="185" width="5" height="1" fill="#181c18"/>
+<rect x="42" y="185" width="5" height="1" fill="#ffffff"/>
+<rect x="47" y="185" width="6" height="1" fill="#181c18"/>
+<rect x="53" y="185" width="5" height="1" fill="#ffffff"/>
+<rect x="58" y="185" width="7" height="1" fill="#181c18"/>
+<rect x="34" y="186" width="8" height="1" fill="#181c18"/>
+<rect x="42" y="186" width="5" height="1" fill="#ffffff"/>
+<rect x="47" y="186" width="6" height="1" fill="#181c18"/>
+<rect x="53" y="186" width="5" height="1" fill="#ffffff"/>
+<rect x="58" y="186" width="7" height="1" fill="#181c18"/>
+<rect x="34" y="187" width="8" height="1" fill="#181c18"/>
+<rect x="42" y="187" width="5" height="1" fill="#ffffff"/>
+<rect x="47" y="187" width="6" height="1" fill="#181c18"/>
+<rect x="53" y="187" width="5" height="1" fill="#ffffff"/>
+<rect x="58" y="187" width="7" height="1" fill="#181c18"/>
+<rect x="34" y="188" width="8" height="1" fill="#181c18"/>
+<rect x="42" y="188" width="5" height="1" fill="#ffffff"/>
+<rect x="47" y="188" width="6" height="1" fill="#181c18"/>
+<rect x="53" y="188" width="5" height="1" fill="#ffffff"/>
+<rect x="58" y="188" width="7" height="1" fill="#181c18"/>
+<rect x="34" y="189" width="31" height="1" fill="#181c18"/>
+<rect x="34" y="190" width="31" height="1" fill="#181c18"/>
+<rect x="37" y="191" width="26" height="1" fill="#181c18"/>
+<rect x="37" y="192" width="26" height="1" fill="#181c18"/>
+<rect x="37" y="193" width="26" height="1" fill="#181c18"/>
+<rect x="37" y="194" width="26" height="1" fill="#181c18"/>
+<rect x="37" y="195" width="26" height="1" fill="#181c18"/>
+<rect x="37" y="196" width="26" height="1" fill="#181c18"/>
+<rect x="37" y="197" width="26" height="1" fill="#181c18"/>
+<rect x="38" y="198" width="24" height="1" fill="#181c18"/>
+<rect x="39" y="199" width="4" height="1" fill="#181c18"/>
+<rect x="45" y="199" width="4" height="1" fill="#181c18"/>
+<rect x="51" y="199" width="4" height="1" fill="#181c18"/>
+<rect x="57" y="199" width="4" height="1" fill="#181c18"/>
+<rect x="39" y="200" width="4" height="1" fill="#181c18"/>
+<rect x="45" y="200" width="4" height="1" fill="#181c18"/>
+<rect x="51" y="200" width="4" height="1" fill="#181c18"/>
+<rect x="57" y="200" width="4" height="1" fill="#181c18"/>
+<rect x="39" y="201" width="4" height="1" fill="#181c18"/>
+<rect x="45" y="201" width="4" height="1" fill="#181c18"/>
+<rect x="51" y="201" width="4" height="1" fill="#181c18"/>
+<rect x="57" y="201" width="4" height="1" fill="#181c18"/>
+<rect x="39" y="202" width="4" height="1" fill="#181c18"/>
+<rect x="45" y="202" width="4" height="1" fill="#181c18"/>
+<rect x="51" y="202" width="4" height="1" fill="#181c18"/>
+<rect x="57" y="202" width="4" height="1" fill="#181c18"/>
+<rect x="39" y="203" width="4" height="1" fill="#181c18"/>
+<rect x="45" y="203" width="4" height="1" fill="#181c18"/>
+<rect x="51" y="203" width="4" height="1" fill="#181c18"/>
+<rect x="57" y="203" width="4" height="1" fill="#181c18"/>
+<rect x="39" y="204" width="4" height="1" fill="#181c18"/>
+<rect x="45" y="204" width="4" height="1" fill="#181c18"/>
+<rect x="51" y="204" width="4" height="1" fill="#181c18"/>
+<rect x="57" y="204" width="4" height="1" fill="#181c18"/>
+<rect x="39" y="205" width="4" height="1" fill="#181c18"/>
+<rect x="45" y="205" width="4" height="1" fill="#181c18"/>
+<rect x="51" y="205" width="4" height="1" fill="#181c18"/>
+<rect x="57" y="205" width="4" height="1" fill="#181c18"/>
+</g>
+<rect x="690" y="1212" width="160" height="5" fill="#ff8e00"/>
+<text x="770.0" y="1242" text-anchor="middle" fill="#8b857c" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="12.5">acena</text>
+<text x="680" y="1072" fill="#f4f1ea" font-size="14.5" font-weight="600">Por que não piscar mais rápido</text>
+<text x="680" y="1094" fill="#8b857c" font-size="13.5">piscada acelerada não se lê como trabalho, se lê</text>
+<text x="680" y="1113" fill="#8b857c" font-size="13.5">como nervosismo — e mistura dois canais no mesmo</text>
+<text x="680" y="1132" fill="#8b857c" font-size="13.5">lugar. Agora os olhos dizem só quanto da cota já</text>
+<text x="680" y="1151" fill="#8b857c" font-size="13.5">foi, e o clawd diz só se está rodando agora.</text>
+<text x="680" y="1194" fill="#f4f1ea" font-size="14.5" font-weight="600">Duas camadas, três cores</text>
+<text x="680" y="1216" fill="#8b857c" font-size="13.5">CORPO pinta a silhueta de escuro, OLHOS pinta só o</text>
+<text x="680" y="1235" fill="#8b857c" font-size="13.5">branco por cima. A pupila é o buraco no branco, com</text>
+<text x="680" y="1254" fill="#8b857c" font-size="13.5">o corpo aparecendo por baixo — três cores sem bitmap</text>
+<text x="680" y="1273" fill="#8b857c" font-size="13.5">colorido e sem tabela de paleta.</text>
+<text x="680" y="1316" fill="#f4f1ea" font-size="14.5" font-weight="600">Custo no ESP8266</text>
+<text x="680" y="1338" fill="#8b857c" font-size="13.5">uma fillRect de 24×27 para apagar e dois drawBitmap</text>
+<text x="680" y="1357" fill="#8b857c" font-size="13.5">para desenhar, 12 vezes por segundo. A barra fica em</text>
+<text x="680" y="1376" fill="#8b857c" font-size="13.5">y 206 e a caixa do sprite termina em 205: um não</text>
+<text x="680" y="1395" fill="#8b857c" font-size="13.5">encosta no outro, então nada precisa ser</text>
+<text x="680" y="1414" fill="#8b857c" font-size="13.5">redesenhado.</text>
+<text x="680" y="1457" fill="#f4f1ea" font-size="14.5" font-weight="600">Cochilando ele some</text>
+<text x="680" y="1479" fill="#8b857c" font-size="13.5">sem notícias do PC há 30 s o clawd sai da tela. Um</text>
+<text x="680" y="1498" fill="#8b857c" font-size="13.5">bicho andando sem ninguém do outro lado do cabo</text>
+<text x="680" y="1517" fill="#8b857c" font-size="13.5">estaria mentindo.</text>
+<text x="60" y="1370" fill="#d97757" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="13" letter-spacing="2">04</text>
+<text x="60" y="1396" fill="#f4f1ea" font-family="ui-sans-serif, system-ui, -apple-system, Segoe UI, Helvetica, Arial, sans-serif" font-size="21" font-weight="600">Proposta: expressões vindas dos hooks</text>
+<text x="60" y="1418" fill="#8b857c" font-family="ui-sans-serif, system-ui, -apple-system, Segoe UI, Helvetica, Arial, sans-serif" font-size="14">o que ainda não existe no firmware — cada rosto usa só primitivas do Adafruit_GFX</text>
+<g transform="translate(60.0,1445) scale(0.75)">
 <rect x="-6" y="-6" width="252" height="252" rx="14" fill="#000" stroke="#d97757" stroke-width="2"/>
-<rect width="240" height="240" fill="#f7e3e7"/>
-<ellipse cx="78" cy="98" rx="30" ry="30" fill="#181c18"/>
-<ellipse cx="78" cy="98" rx="16" ry="16" fill="#ff9600"/>
-<circle cx="68" cy="83" r="4" fill="#ffffff"/>
-<ellipse cx="162" cy="98" rx="30" ry="30" fill="#181c18"/>
-<ellipse cx="162" cy="98" rx="16" ry="16" fill="#ff9600"/>
-<circle cx="152" cy="83" r="4" fill="#ffffff"/>
+<rect width="240" height="240" fill="#ff6531"/>
+<ellipse cx="72" cy="98" rx="36" ry="30" fill="#181c18"/>
+<ellipse cx="72" cy="98" rx="19" ry="16" fill="#ff9600"/>
+<circle cx="60" cy="83" r="5" fill="#ffffff"/>
+<ellipse cx="168" cy="98" rx="36" ry="30" fill="#181c18"/>
+<ellipse cx="168" cy="98" rx="19" ry="16" fill="#ff9600"/>
+<circle cx="156" cy="83" r="5" fill="#ffffff"/>
 <text x="206" y="62" fill="#181c18" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="52" font-weight="700" text-anchor="middle">?</text>
-<rect x="34" y="206" width="172" height="10" rx="5" fill="#e7e3e7"/>
+<rect x="34" y="206" width="172" height="10" rx="5" fill="#8c4921"/>
 <rect x="34" y="206" width="77" height="10" rx="5" fill="#c6a610"/>
 </g>
-<text x="150.0" y="1260.0" text-anchor="middle" fill="#f4f1ea" font-family="ui-sans-serif, system-ui, -apple-system, Segoe UI, Helvetica, Arial, sans-serif" font-size="15" font-weight="600">perguntando</text>
-<text x="150.0" y="1280.0" text-anchor="middle" fill="#8b857c" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="12.5">Notification (permission_prompt)</text>
-<g transform="translate(264.0,1050) scale(0.75)">
+<text x="150.0" y="1655.0" text-anchor="middle" fill="#f4f1ea" font-family="ui-sans-serif, system-ui, -apple-system, Segoe UI, Helvetica, Arial, sans-serif" font-size="15" font-weight="600">perguntando</text>
+<text x="150.0" y="1675.0" text-anchor="middle" fill="#8b857c" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="12.5">Notification (permission_prompt)</text>
+<g transform="translate(264.0,1445) scale(0.75)">
 <rect x="-6" y="-6" width="252" height="252" rx="14" fill="#000" stroke="#d97757" stroke-width="2"/>
-<rect width="240" height="240" fill="#f7e3e7"/>
-<ellipse cx="78" cy="104" rx="30" ry="22" fill="#181c18"/>
-<ellipse cx="78" cy="104" rx="16" ry="12" fill="#ff9600"/>
-<circle cx="68" cy="93" r="4" fill="#ffffff"/>
-<ellipse cx="162" cy="104" rx="30" ry="22" fill="#181c18"/>
-<ellipse cx="162" cy="104" rx="16" ry="12" fill="#ff9600"/>
-<circle cx="152" cy="93" r="4" fill="#ffffff"/>
+<rect width="240" height="240" fill="#ff6531"/>
+<ellipse cx="72" cy="104" rx="36" ry="22" fill="#181c18"/>
+<ellipse cx="72" cy="104" rx="19" ry="12" fill="#ff9600"/>
+<circle cx="60" cy="93" r="5" fill="#ffffff"/>
+<ellipse cx="168" cy="104" rx="36" ry="22" fill="#181c18"/>
+<ellipse cx="168" cy="104" rx="19" ry="12" fill="#ff9600"/>
+<circle cx="156" cy="93" r="5" fill="#ffffff"/>
 <circle cx="100" cy="170" r="6" fill="#181c18"/>
 <circle cx="120" cy="170" r="6" fill="#181c18"/>
-<circle cx="140" cy="170" r="6" fill="#e7e3e7"/>
-<rect x="34" y="206" width="172" height="10" rx="5" fill="#e7e3e7"/>
+<circle cx="140" cy="170" r="6" fill="#8c4921"/>
+<rect x="34" y="206" width="172" height="10" rx="5" fill="#8c4921"/>
 <rect x="34" y="206" width="77" height="10" rx="5" fill="#c6a610"/>
 </g>
-<text x="354.0" y="1260.0" text-anchor="middle" fill="#f4f1ea" font-family="ui-sans-serif, system-ui, -apple-system, Segoe UI, Helvetica, Arial, sans-serif" font-size="15" font-weight="600">trabalhando</text>
-<text x="354.0" y="1280.0" text-anchor="middle" fill="#8b857c" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="12.5">PreToolUse</text>
-<g transform="translate(468.0,1050) scale(0.75)">
+<text x="354.0" y="1655.0" text-anchor="middle" fill="#f4f1ea" font-family="ui-sans-serif, system-ui, -apple-system, Segoe UI, Helvetica, Arial, sans-serif" font-size="15" font-weight="600">trabalhando</text>
+<text x="354.0" y="1675.0" text-anchor="middle" fill="#8b857c" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="12.5">PreToolUse</text>
+<g transform="translate(468.0,1445) scale(0.75)">
 <rect x="-6" y="-6" width="252" height="252" rx="14" fill="#000" stroke="#d97757" stroke-width="2"/>
-<rect width="240" height="240" fill="#f7e3e7"/>
-<ellipse cx="87" cy="104" rx="30" ry="30" fill="#181c18"/>
-<ellipse cx="87" cy="104" rx="16" ry="16" fill="#29d342"/>
-<circle cx="77" cy="89" r="4" fill="#ffffff"/>
-<ellipse cx="171" cy="104" rx="30" ry="30" fill="#181c18"/>
-<ellipse cx="171" cy="104" rx="16" ry="16" fill="#29d342"/>
-<circle cx="161" cy="89" r="4" fill="#ffffff"/>
-<rect x="34" y="206" width="172" height="10" rx="5" fill="#e7e3e7"/>
+<rect width="240" height="240" fill="#ff6531"/>
+<ellipse cx="81" cy="104" rx="36" ry="30" fill="#181c18"/>
+<ellipse cx="81" cy="104" rx="19" ry="16" fill="#29d342"/>
+<circle cx="69" cy="89" r="5" fill="#ffffff"/>
+<ellipse cx="177" cy="104" rx="36" ry="30" fill="#181c18"/>
+<ellipse cx="177" cy="104" rx="19" ry="16" fill="#29d342"/>
+<circle cx="165" cy="89" r="5" fill="#ffffff"/>
+<rect x="34" y="206" width="172" height="10" rx="5" fill="#8c4921"/>
 <rect x="34" y="206" width="77" height="10" rx="5" fill="#c6a610"/>
 </g>
-<text x="558.0" y="1260.0" text-anchor="middle" fill="#f4f1ea" font-family="ui-sans-serif, system-ui, -apple-system, Segoe UI, Helvetica, Arial, sans-serif" font-size="15" font-weight="600">procurando</text>
-<text x="558.0" y="1280.0" text-anchor="middle" fill="#8b857c" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="12.5">PreToolUse (Grep, Read)</text>
-<g transform="translate(60.0,1316) scale(0.75)">
+<text x="558.0" y="1655.0" text-anchor="middle" fill="#f4f1ea" font-family="ui-sans-serif, system-ui, -apple-system, Segoe UI, Helvetica, Arial, sans-serif" font-size="15" font-weight="600">procurando</text>
+<text x="558.0" y="1675.0" text-anchor="middle" fill="#8b857c" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="12.5">PreToolUse (Grep, Read)</text>
+<g transform="translate(60.0,1711) scale(0.75)">
 <rect x="-6" y="-6" width="252" height="252" rx="14" fill="#000" stroke="#d97757" stroke-width="2"/>
-<rect width="240" height="240" fill="#f7e3e7"/>
-<line x1="54" y1="49" x2="102" y2="67" stroke="#181c18" stroke-width="6" stroke-linecap="round"/>
-<line x1="138" y1="67" x2="186" y2="49" stroke="#181c18" stroke-width="6" stroke-linecap="round"/>
-<ellipse cx="78" cy="104" rx="30" ry="26" fill="#181c18"/>
-<ellipse cx="78" cy="104" rx="16" ry="14" fill="#e71418"/>
-<circle cx="68" cy="91" r="4" fill="#ffffff"/>
-<ellipse cx="162" cy="104" rx="30" ry="26" fill="#181c18"/>
-<ellipse cx="162" cy="104" rx="16" ry="14" fill="#e71418"/>
-<circle cx="152" cy="91" r="4" fill="#ffffff"/>
+<rect width="240" height="240" fill="#ff6531"/>
+<line x1="48" y1="49" x2="96" y2="67" stroke="#181c18" stroke-width="6" stroke-linecap="round"/>
+<line x1="144" y1="67" x2="192" y2="49" stroke="#181c18" stroke-width="6" stroke-linecap="round"/>
+<ellipse cx="72" cy="104" rx="36" ry="26" fill="#181c18"/>
+<ellipse cx="72" cy="104" rx="19" ry="14" fill="#e71418"/>
+<circle cx="60" cy="91" r="5" fill="#ffffff"/>
+<ellipse cx="168" cy="104" rx="36" ry="26" fill="#181c18"/>
+<ellipse cx="168" cy="104" rx="19" ry="14" fill="#e71418"/>
+<circle cx="156" cy="91" r="5" fill="#ffffff"/>
 <ellipse cx="120" cy="170" rx="16" ry="9" fill="#181c18"/>
-<rect x="34" y="206" width="172" height="10" rx="5" fill="#e7e3e7"/>
+<rect x="34" y="206" width="172" height="10" rx="5" fill="#8c4921"/>
 <rect x="34" y="206" width="77" height="10" rx="5" fill="#c6a610"/>
 </g>
-<text x="150.0" y="1526.0" text-anchor="middle" fill="#f4f1ea" font-family="ui-sans-serif, system-ui, -apple-system, Segoe UI, Helvetica, Arial, sans-serif" font-size="15" font-weight="600">deu erro</text>
-<text x="150.0" y="1546.0" text-anchor="middle" fill="#8b857c" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="12.5">PostToolUseFailure, StopFailure</text>
-<g transform="translate(264.0,1316) scale(0.75)">
+<text x="150.0" y="1921.0" text-anchor="middle" fill="#f4f1ea" font-family="ui-sans-serif, system-ui, -apple-system, Segoe UI, Helvetica, Arial, sans-serif" font-size="15" font-weight="600">deu erro</text>
+<text x="150.0" y="1941.0" text-anchor="middle" fill="#8b857c" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="12.5">PostToolUseFailure, StopFailure</text>
+<g transform="translate(264.0,1711) scale(0.75)">
 <rect x="-6" y="-6" width="252" height="252" rx="14" fill="#000" stroke="#d97757" stroke-width="2"/>
-<rect width="240" height="240" fill="#f7e3e7"/>
-<path d="M 52 112 L 78 90 L 104 112" fill="none" stroke="#181c18" stroke-width="7" stroke-linecap="round" stroke-linejoin="round"/>
-<path d="M 136 112 L 162 90 L 188 112" fill="none" stroke="#181c18" stroke-width="7" stroke-linecap="round" stroke-linejoin="round"/>
+<rect width="240" height="240" fill="#ff6531"/>
+<path d="M 46 112 L 72 90 L 98 112" fill="none" stroke="#181c18" stroke-width="7" stroke-linecap="round" stroke-linejoin="round"/>
+<path d="M 142 112 L 168 90 L 194 112" fill="none" stroke="#181c18" stroke-width="7" stroke-linecap="round" stroke-linejoin="round"/>
 <ellipse cx="120" cy="170" rx="20" ry="12" fill="#181c18"/>
-<rect x="34" y="206" width="172" height="10" rx="5" fill="#e7e3e7"/>
+<rect x="34" y="206" width="172" height="10" rx="5" fill="#8c4921"/>
 <rect x="34" y="206" width="77" height="10" rx="5" fill="#c6a610"/>
 </g>
-<text x="354.0" y="1526.0" text-anchor="middle" fill="#f4f1ea" font-family="ui-sans-serif, system-ui, -apple-system, Segoe UI, Helvetica, Arial, sans-serif" font-size="15" font-weight="600">resolveu</text>
-<text x="354.0" y="1546.0" text-anchor="middle" fill="#8b857c" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="12.5">Stop, TaskCompleted</text>
-<g transform="translate(468.0,1316) scale(0.75)">
+<text x="354.0" y="1921.0" text-anchor="middle" fill="#f4f1ea" font-family="ui-sans-serif, system-ui, -apple-system, Segoe UI, Helvetica, Arial, sans-serif" font-size="15" font-weight="600">resolveu</text>
+<text x="354.0" y="1941.0" text-anchor="middle" fill="#8b857c" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="12.5">Stop, TaskCompleted</text>
+<g transform="translate(468.0,1711) scale(0.75)">
 <rect x="-6" y="-6" width="252" height="252" rx="14" fill="#000" stroke="#d97757" stroke-width="2"/>
-<rect width="240" height="240" fill="#f7e3e7"/>
-<ellipse cx="78" cy="104" rx="30" ry="30" fill="#181c18"/>
-<ellipse cx="78" cy="104" rx="16" ry="16" fill="#29d342"/>
-<circle cx="68" cy="89" r="4" fill="#ffffff"/>
-<ellipse cx="162" cy="104" rx="30" ry="30" fill="#181c18"/>
-<ellipse cx="162" cy="104" rx="16" ry="16" fill="#29d342"/>
-<circle cx="152" cy="89" r="4" fill="#ffffff"/>
+<rect width="240" height="240" fill="#ff6531"/>
+<ellipse cx="72" cy="104" rx="36" ry="30" fill="#181c18"/>
+<ellipse cx="72" cy="104" rx="19" ry="16" fill="#29d342"/>
+<circle cx="60" cy="89" r="5" fill="#ffffff"/>
+<ellipse cx="168" cy="104" rx="36" ry="30" fill="#181c18"/>
+<ellipse cx="168" cy="104" rx="19" ry="16" fill="#29d342"/>
+<circle cx="156" cy="89" r="5" fill="#ffffff"/>
 <ellipse cx="120" cy="170" rx="14" ry="17" fill="#181c18"/>
-<rect x="34" y="206" width="172" height="10" rx="5" fill="#e7e3e7"/>
+<rect x="34" y="206" width="172" height="10" rx="5" fill="#8c4921"/>
 <rect x="34" y="206" width="77" height="10" rx="5" fill="#c6a610"/>
 </g>
-<text x="558.0" y="1526.0" text-anchor="middle" fill="#f4f1ea" font-family="ui-sans-serif, system-ui, -apple-system, Segoe UI, Helvetica, Arial, sans-serif" font-size="15" font-weight="600">falando</text>
-<text x="558.0" y="1546.0" text-anchor="middle" fill="#8b857c" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="12.5">MessageDisplay</text>
-<rect x="694" y="1010" width="426" height="672" rx="14" fill="#1b1714" stroke="#2b2722"/>
-<text x="716" y="1044" fill="#f4f1ea" font-size="15" font-weight="600">Vocabulário de state a acrescentar</text>
-<text x="716" y="1066" fill="#8b857c" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="12" xml:space="preserve">valor   rosto          hook</text>
-<text x="716" y="1088" fill="#f4f1ea" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="12" xml:space="preserve"><tspan fill="#d97757">ask     </tspan>perguntando    <tspan fill="#8b857c">Notification</tspan></text>
-<text x="716" y="1108" fill="#f4f1ea" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="12" xml:space="preserve"><tspan fill="#d97757">tool    </tspan>trabalhando    <tspan fill="#8b857c">PreToolUse</tspan></text>
-<text x="716" y="1128" fill="#f4f1ea" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="12" xml:space="preserve"><tspan fill="#d97757">find    </tspan>procurando     <tspan fill="#8b857c">PreToolUse</tspan></text>
-<text x="716" y="1148" fill="#f4f1ea" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="12" xml:space="preserve"><tspan fill="#d97757">error   </tspan>deu erro       <tspan fill="#8b857c">PostToolUseFailure</tspan></text>
-<text x="716" y="1168" fill="#f4f1ea" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="12" xml:space="preserve"><tspan fill="#d97757">done    </tspan>resolveu       <tspan fill="#8b857c">Stop</tspan></text>
-<text x="716" y="1188" fill="#f4f1ea" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="12" xml:space="preserve"><tspan fill="#d97757">talk    </tspan>falando        <tspan fill="#8b857c">MessageDisplay</tspan></text>
-<text x="716" y="1234" fill="#f4f1ea" font-size="14.5" font-weight="600">Como o dado chega</text>
-<text x="716" y="1256" fill="#8b857c" font-size="13.5">a status line já recebe</text>
-<text x="716" y="1275" fill="#8b857c" font-size="13.5">context_window.used_percentage e</text>
-<text x="716" y="1294" fill="#8b857c" font-size="13.5">rate_limits.five_hour.used_percentage a cada</text>
-<text x="716" y="1313" fill="#8b857c" font-size="13.5">mensagem do assistente; os hooks só acrescentam</text>
-<text x="716" y="1332" fill="#8b857c" font-size="13.5">o campo state.</text>
-<text x="716" y="1377" fill="#f4f1ea" font-size="14.5" font-weight="600">Protocolo</text>
-<text x="716" y="1399" fill="#8b857c" font-size="13.5">continua uma linha a 115200 bps — ctx=42 win=63</text>
-<text x="716" y="1418" fill="#8b857c" font-size="13.5">state=busy — só cresce o vocabulário aceito em</text>
-<text x="716" y="1437" fill="#8b857c" font-size="13.5">applyKV().</text>
-<text x="716" y="1482" fill="#f4f1ea" font-size="14.5" font-weight="600">Custo no ESP8266</text>
-<text x="716" y="1504" fill="#8b857c" font-size="13.5">cada rosto redesenha apenas a área dos olhos.</text>
-<text x="716" y="1523" fill="#8b857c" font-size="13.5">Boca e sobrancelha são mais dois retângulos</text>
-<text x="716" y="1542" fill="#8b857c" font-size="13.5">limpos por quadro: cabe folgado nos ~60 fps.</text>
-<text x="716" y="1587" fill="#f4f1ea" font-size="14.5" font-weight="600">Cuidado</text>
-<text x="716" y="1609" fill="#8b857c" font-size="13.5">expressão que troca toda hora vira poluição</text>
-<text x="716" y="1628" fill="#8b857c" font-size="13.5">visual. Vale segurar cada estado por ~800 ms</text>
-<text x="716" y="1647" fill="#8b857c" font-size="13.5">antes de voltar ao rosto de contexto.</text>
-<text x="60" y="1710" fill="#5b554e" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="12">gerado por docs/tela/gera_svg.py · projeto de fã, sem vínculo com a Anthropic</text>
+<text x="558.0" y="1921.0" text-anchor="middle" fill="#f4f1ea" font-family="ui-sans-serif, system-ui, -apple-system, Segoe UI, Helvetica, Arial, sans-serif" font-size="15" font-weight="600">falando</text>
+<text x="558.0" y="1941.0" text-anchor="middle" fill="#8b857c" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="12.5">MessageDisplay</text>
+<rect x="694" y="1405" width="426" height="672" rx="14" fill="#1b1714" stroke="#2b2722"/>
+<text x="716" y="1439" fill="#f4f1ea" font-size="15" font-weight="600">Vocabulário de state a acrescentar</text>
+<text x="716" y="1461" fill="#8b857c" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="12" xml:space="preserve">valor   rosto          hook</text>
+<text x="716" y="1483" fill="#f4f1ea" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="12" xml:space="preserve"><tspan fill="#d97757">ask     </tspan>perguntando    <tspan fill="#8b857c">Notification</tspan></text>
+<text x="716" y="1503" fill="#f4f1ea" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="12" xml:space="preserve"><tspan fill="#d97757">tool    </tspan>trabalhando    <tspan fill="#8b857c">PreToolUse</tspan></text>
+<text x="716" y="1523" fill="#f4f1ea" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="12" xml:space="preserve"><tspan fill="#d97757">find    </tspan>procurando     <tspan fill="#8b857c">PreToolUse</tspan></text>
+<text x="716" y="1543" fill="#f4f1ea" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="12" xml:space="preserve"><tspan fill="#d97757">error   </tspan>deu erro       <tspan fill="#8b857c">PostToolUseFailure</tspan></text>
+<text x="716" y="1563" fill="#f4f1ea" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="12" xml:space="preserve"><tspan fill="#d97757">done    </tspan>resolveu       <tspan fill="#8b857c">Stop</tspan></text>
+<text x="716" y="1583" fill="#f4f1ea" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="12" xml:space="preserve"><tspan fill="#d97757">talk    </tspan>falando        <tspan fill="#8b857c">MessageDisplay</tspan></text>
+<text x="716" y="1629" fill="#f4f1ea" font-size="14.5" font-weight="600">Como o dado chega</text>
+<text x="716" y="1651" fill="#8b857c" font-size="13.5">a status line já recebe</text>
+<text x="716" y="1670" fill="#8b857c" font-size="13.5">context_window.used_percentage e</text>
+<text x="716" y="1689" fill="#8b857c" font-size="13.5">rate_limits.five_hour.used_percentage a cada</text>
+<text x="716" y="1708" fill="#8b857c" font-size="13.5">mensagem do assistente; os hooks só acrescentam</text>
+<text x="716" y="1727" fill="#8b857c" font-size="13.5">o campo state.</text>
+<text x="716" y="1772" fill="#f4f1ea" font-size="14.5" font-weight="600">Protocolo</text>
+<text x="716" y="1794" fill="#8b857c" font-size="13.5">continua uma linha a 115200 bps — ctx=42 win=63</text>
+<text x="716" y="1813" fill="#8b857c" font-size="13.5">state=busy — só cresce o vocabulário aceito em</text>
+<text x="716" y="1832" fill="#8b857c" font-size="13.5">applyKV().</text>
+<text x="716" y="1877" fill="#f4f1ea" font-size="14.5" font-weight="600">Custo no ESP8266</text>
+<text x="716" y="1899" fill="#8b857c" font-size="13.5">cada rosto redesenha apenas a área dos olhos.</text>
+<text x="716" y="1918" fill="#8b857c" font-size="13.5">Boca e sobrancelha são mais dois retângulos</text>
+<text x="716" y="1937" fill="#8b857c" font-size="13.5">limpos por quadro: cabe folgado nos ~60 fps.</text>
+<text x="716" y="1982" fill="#f4f1ea" font-size="14.5" font-weight="600">Cuidado</text>
+<text x="716" y="2004" fill="#8b857c" font-size="13.5">expressão que troca toda hora vira poluição</text>
+<text x="716" y="2023" fill="#8b857c" font-size="13.5">visual. Vale segurar cada estado por ~800 ms</text>
+<text x="716" y="2042" fill="#8b857c" font-size="13.5">antes de voltar ao rosto de contexto.</text>
+<text x="60" y="2105" fill="#5b554e" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="12">gerado por docs/tela/gera_svg.py · projeto de fã, sem vínculo com a Anthropic</text>
 </svg>

@@ -37,7 +37,14 @@
 #if LINK_WIFI
   #include <ESP8266WebServer.h>
   #include <ESP8266mDNS.h>
-  #include "config.h"      // copie de config.example.h (so precisa no modo Wi-Fi)
+  // So no modo Wi-Fi. Crie config.h ao lado deste arquivo com:
+  //     #pragma once
+  //     #define WIFI_SSID     "sua-rede-wifi"
+  //     #define WIFI_PASSWORD "sua-senha"
+  //     #define MDNS_NAME     "mochi"   // http://mochi.local
+  // Fica fora do sketch de proposito: config.h esta no .gitignore, entao a
+  // senha nao vai para o repositorio junto com o firmware.
+  #include "config.h"
   ESP8266WebServer server(80);
 #endif
 
@@ -91,6 +98,14 @@ static const int16_t EYE_RY    = 42;   // meia-altura maxima do olho
 // A area que drawEye limpa e (EYE_RX+4)*2 por (EYE_RY+4)*2. Com os valores
 // acima isso ocupa x 32..112 e 128..208, e y 58..150 — sem invadir a borda
 // nem a barra (y 206). Se aumentar mais, confira essas contas antes.
+// "?" do modo ask: fonte embutida 6x8, tamanho 6 -> 36x48 px. Precisa caber
+// na faixa livre ACIMA dos olhos (y 0..58 — o comentario logo abaixo explica
+// por que essa faixa e livre); tamanho 8 (64px) estourava e ficava sendo
+// mordido pelo fillRect do drawEye toda vez que os olhos redesenhavam.
+static const int16_t ASK_X     = 194;
+static const int16_t ASK_Y     = 2;
+static const int16_t ASK_W     = 36;
+static const int16_t ASK_H     = 48;
 static const int16_t BAR_Y     = 206;
 static const int16_t BAR_H     = 10;
 static const int16_t BAR_X     = 34;
@@ -103,7 +118,7 @@ static const unsigned long IDLE_TIMEOUT_MS = 30000;
 struct State {
   int   ctx       = 0;       // % da janela de contexto usada
   int   win       = 0;       // % do limite de 5h usado
-  char  mode[12]  = "idle";  // idle | busy | compact
+  char  mode[12]  = "idle";  // idle | busy | compact | ask
   bool  backlight = true;
   unsigned long lastPing = 0;
   bool  everPinged = false;
@@ -152,6 +167,7 @@ static int    lastDrawnBarra = -1;
 static int    lastEyeH     = -1;
 static bool   lastCrossed  = false;
 static bool   lastAsleep   = false;
+static bool   lastAsking   = false;
 
 // ------------------------------------------------------------------- utils ---
 static int clampi(int v, int lo, int hi) { return v < lo ? lo : (v > hi ? hi : v); }
@@ -240,6 +256,230 @@ static void drawBar(int pct) {
   } else if (w > 0) {
     tft.fillRect(BAR_X, BAR_Y, w, BAR_H, levelColor(pct));
   }
+}
+
+// >>> SPRITES GERADOS — NAO EDITE A MAO.
+// Saem de firmware/gera_sprites.py, onde as poses sao desenhadas em
+// ASCII. Mexeu numa pose? Rode o script: ele reescreve so este bloco,
+// entre os marcadores >>> e <<<, e nao toca em mais nada do sketch.
+static const int16_t CLAWD_W = 32;
+static const int16_t CLAWD_H = 30;
+
+// ---- ANDA_A --------------------------------------------------
+// ................................
+// ................................
+// ................................
+// ....########################....
+// ...##########################...
+// ...##########################...
+// ...##########################...
+// ...##########################...
+// ...#####ooooo######ooooo#####...
+// ...#####ooooo######ooooo#####...
+// ########ooooo######ooooo########
+// ########ooooo######ooooo########
+// ########ooooo######ooooo########
+// ################################
+// ################################
+// ...##########################...
+// ...##########################...
+// ...##########################...
+// ...##########################...
+// ...##########################...
+// ...##########################...
+// ...##########################...
+// ....########################....
+// .....####..####..####..####.....
+// .....####..####..####..####.....
+// .....####..####..####..####.....
+// .....####..####..####..####.....
+// .....####..####..####..####.....
+// .....####........####...........
+// .....####........####...........
+static const uint8_t CLAWD_ANDA_A_CORPO[] PROGMEM = {
+  0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+  0x0F, 0xFF, 0xFF, 0xF0, 0x1F, 0xFF, 0xFF, 0xF8, 0x1F, 0xFF, 0xFF, 0xF8,
+  0x1F, 0xFF, 0xFF, 0xF8, 0x1F, 0xFF, 0xFF, 0xF8, 0x1F, 0xFF, 0xFF, 0xF8,
+  0x1F, 0xFF, 0xFF, 0xF8, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF,
+  0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF,
+  0x1F, 0xFF, 0xFF, 0xF8, 0x1F, 0xFF, 0xFF, 0xF8, 0x1F, 0xFF, 0xFF, 0xF8,
+  0x1F, 0xFF, 0xFF, 0xF8, 0x1F, 0xFF, 0xFF, 0xF8, 0x1F, 0xFF, 0xFF, 0xF8,
+  0x1F, 0xFF, 0xFF, 0xF8, 0x0F, 0xFF, 0xFF, 0xF0, 0x07, 0x9E, 0x79, 0xE0,
+  0x07, 0x9E, 0x79, 0xE0, 0x07, 0x9E, 0x79, 0xE0, 0x07, 0x9E, 0x79, 0xE0,
+  0x07, 0x9E, 0x79, 0xE0, 0x07, 0x80, 0x78, 0x00, 0x07, 0x80, 0x78, 0x00,
+};
+static const uint8_t CLAWD_ANDA_A_OLHOS[] PROGMEM = {
+  0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+  0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+  0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0xF8, 0x1F, 0x00,
+  0x00, 0xF8, 0x1F, 0x00, 0x00, 0xF8, 0x1F, 0x00, 0x00, 0xF8, 0x1F, 0x00,
+  0x00, 0xF8, 0x1F, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+  0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+  0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+  0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+  0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+  0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+};
+
+// ---- ANDA_B --------------------------------------------------
+// ................................
+// ................................
+// ....########################....
+// ...##########################...
+// ...##########################...
+// ...##########################...
+// ...##########################...
+// ...#####ooooo######ooooo#####...
+// ...#####ooooo######ooooo#####...
+// ########ooooo######ooooo########
+// ########ooooo######ooooo########
+// ########ooooo######ooooo########
+// ################################
+// ################################
+// ...##########################...
+// ...##########################...
+// ...##########################...
+// ...##########################...
+// ...##########################...
+// ...##########################...
+// ...##########################...
+// ....########################....
+// .....####..####..####..####.....
+// .....####..####..####..####.....
+// .....####..####..####..####.....
+// .....####..####..####..####.....
+// .....####..####..####..####.....
+// .....####..####..####..####.....
+// ...........####........####.....
+// ...........####........####.....
+static const uint8_t CLAWD_ANDA_B_CORPO[] PROGMEM = {
+  0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x0F, 0xFF, 0xFF, 0xF0,
+  0x1F, 0xFF, 0xFF, 0xF8, 0x1F, 0xFF, 0xFF, 0xF8, 0x1F, 0xFF, 0xFF, 0xF8,
+  0x1F, 0xFF, 0xFF, 0xF8, 0x1F, 0xFF, 0xFF, 0xF8, 0x1F, 0xFF, 0xFF, 0xF8,
+  0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF,
+  0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0x1F, 0xFF, 0xFF, 0xF8,
+  0x1F, 0xFF, 0xFF, 0xF8, 0x1F, 0xFF, 0xFF, 0xF8, 0x1F, 0xFF, 0xFF, 0xF8,
+  0x1F, 0xFF, 0xFF, 0xF8, 0x1F, 0xFF, 0xFF, 0xF8, 0x1F, 0xFF, 0xFF, 0xF8,
+  0x0F, 0xFF, 0xFF, 0xF0, 0x07, 0x9E, 0x79, 0xE0, 0x07, 0x9E, 0x79, 0xE0,
+  0x07, 0x9E, 0x79, 0xE0, 0x07, 0x9E, 0x79, 0xE0, 0x07, 0x9E, 0x79, 0xE0,
+  0x07, 0x9E, 0x79, 0xE0, 0x00, 0x1E, 0x01, 0xE0, 0x00, 0x1E, 0x01, 0xE0,
+};
+static const uint8_t CLAWD_ANDA_B_OLHOS[] PROGMEM = {
+  0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+  0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+  0x00, 0x00, 0x00, 0x00, 0x00, 0xF8, 0x1F, 0x00, 0x00, 0xF8, 0x1F, 0x00,
+  0x00, 0xF8, 0x1F, 0x00, 0x00, 0xF8, 0x1F, 0x00, 0x00, 0xF8, 0x1F, 0x00,
+  0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+  0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+  0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+  0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+  0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+  0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+};
+
+// ---- ACENA ---------------------------------------------------
+// ............................###.
+// ............................###.
+// ............................###.
+// ....###########################.
+// ...############################.
+// ...############################.
+// ...############################.
+// ...############################.
+// ...#####ooooo######ooooo#######.
+// ...#####ooooo######ooooo#######.
+// ########ooooo######ooooo#######.
+// ########ooooo######ooooo#######.
+// ########ooooo######ooooo#######.
+// ###############################.
+// ###############################.
+// ...##########################...
+// ...##########################...
+// ...##########################...
+// ...##########################...
+// ...##########################...
+// ...##########################...
+// ...##########################...
+// ....########################....
+// .....####..####..####..####.....
+// .....####..####..####..####.....
+// .....####..####..####..####.....
+// .....####..####..####..####.....
+// .....####..####..####..####.....
+// .....####..####..####..####.....
+// .....####..####..####..####.....
+static const uint8_t CLAWD_ACENA_CORPO[] PROGMEM = {
+  0x00, 0x00, 0x00, 0x0E, 0x00, 0x00, 0x00, 0x0E, 0x00, 0x00, 0x00, 0x0E,
+  0x0F, 0xFF, 0xFF, 0xFE, 0x1F, 0xFF, 0xFF, 0xFE, 0x1F, 0xFF, 0xFF, 0xFE,
+  0x1F, 0xFF, 0xFF, 0xFE, 0x1F, 0xFF, 0xFF, 0xFE, 0x1F, 0xFF, 0xFF, 0xFE,
+  0x1F, 0xFF, 0xFF, 0xFE, 0xFF, 0xFF, 0xFF, 0xFE, 0xFF, 0xFF, 0xFF, 0xFE,
+  0xFF, 0xFF, 0xFF, 0xFE, 0xFF, 0xFF, 0xFF, 0xFE, 0xFF, 0xFF, 0xFF, 0xFE,
+  0x1F, 0xFF, 0xFF, 0xF8, 0x1F, 0xFF, 0xFF, 0xF8, 0x1F, 0xFF, 0xFF, 0xF8,
+  0x1F, 0xFF, 0xFF, 0xF8, 0x1F, 0xFF, 0xFF, 0xF8, 0x1F, 0xFF, 0xFF, 0xF8,
+  0x1F, 0xFF, 0xFF, 0xF8, 0x0F, 0xFF, 0xFF, 0xF0, 0x07, 0x9E, 0x79, 0xE0,
+  0x07, 0x9E, 0x79, 0xE0, 0x07, 0x9E, 0x79, 0xE0, 0x07, 0x9E, 0x79, 0xE0,
+  0x07, 0x9E, 0x79, 0xE0, 0x07, 0x9E, 0x79, 0xE0, 0x07, 0x9E, 0x79, 0xE0,
+};
+static const uint8_t CLAWD_ACENA_OLHOS[] PROGMEM = {
+  0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+  0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+  0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0xF8, 0x1F, 0x00,
+  0x00, 0xF8, 0x1F, 0x00, 0x00, 0xF8, 0x1F, 0x00, 0x00, 0xF8, 0x1F, 0x00,
+  0x00, 0xF8, 0x1F, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+  0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+  0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+  0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+  0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+  0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+};
+
+static const uint8_t *const CLAWD_CORPO[] = {CLAWD_ANDA_A_CORPO, CLAWD_ANDA_B_CORPO, CLAWD_ACENA_CORPO};
+static const uint8_t *const CLAWD_OLHOS[] = {CLAWD_ANDA_A_OLHOS, CLAWD_ANDA_B_OLHOS, CLAWD_ACENA_OLHOS};
+static const uint8_t CLAWD_ANDA_A = 0, CLAWD_ANDA_B = 1, CLAWD_ACENA = 2;
+// <<< SPRITES GERADOS
+
+// -------------------------------------------- o clawd que anda sobre a barra ---
+// Sinal de "esta trabalhando". Entrou no lugar do piscar acelerado: piscar mais
+// rapido nao se le como trabalho, se le como nervosismo — e pior, mistura o
+// canal dos olhos (que e a cota) com o canal do modo. Agora cada um diz uma
+// coisa so: olhos = quanto ja gastou, clawd andando = esta rodando agora.
+//
+// Quem anda e o proprio claude-mochi em miniatura: corpo de bloco arredondado,
+// dois olhos quadrados, quatro perninhas e dois toquinhos de braco.
+//
+// As poses vem do bloco de sprites logo acima, gerado por
+// firmware/gera_sprites.py. Nao mexa nele na mao.
+//
+// Dois bitmaps por pose, nao um: CORPO pinta a silhueta inteira de escuro e
+// OLHOS pinta os olhos por cima. Duas cores sem bitmap colorido e sem paleta.
+//
+// O sobe-e-desce da caminhada esta DENTRO dos sprites (a pose ANDA_B ja vem um
+// pixel mais alta), nao no firmware. Assim a caixa a apagar e sempre a mesma.
+static const int16_t WK_FEET = BAR_Y - 1;               // o pe toca a barra
+static const int16_t WK_X0   = BAR_X;
+static const int16_t WK_X1   = BAR_X + BAR_W - CLAWD_W;
+static const int16_t WK_STEP = 4;
+static const unsigned long WK_MS = 80;                  // ~12 passos/s
+static const uint8_t WK_ACENOS = 10;                    // ticks acenando na ponta
+
+static int16_t       wkX     = -1;          // -1 = nao esta na tela
+static int8_t        wkDir   = 1;
+static uint16_t      wkPasso = 0;
+static uint8_t       wkAcena = 0;
+static unsigned long wkNext  = 0;
+
+// A caixa vai de WK_FEET-CLAWD_H+1 a WK_FEET (184..205 com BAR_Y=206): nao
+// encosta na barra (206) nem na area dos olhos (que termina em 150).
+// Mexeu em BAR_Y ou no tamanho do sprite? Refaca esta conta.
+static void eraseWalker(int16_t x) {
+  if (x < 0) return;
+  tft.fillRect(x, WK_FEET - CLAWD_H + 1, CLAWD_W, CLAWD_H, C_FACE);
+}
+
+static void drawWalker(int16_t x, uint8_t pose) {
+  const int16_t y = WK_FEET - CLAWD_H + 1;
+  tft.drawBitmap(x, y, CLAWD_CORPO[pose], CLAWD_W, CLAWD_H, C_EYE);
+  tft.drawBitmap(x, y, CLAWD_OLHOS[pose], CLAWD_W, CLAWD_H, C_SHINE);
 }
 
 #if BOOT_DEMO
@@ -429,7 +669,8 @@ void loop() {
   const unsigned long now = millis();
   const bool asleep = isAsleep();
 
-  // Piscar: mais rapido enquanto o Claude esta trabalhando.
+  // Piscar so para o bicho nao parecer morto. Quem diz "esta trabalhando" e o
+  // clawd andando la embaixo, nao a frequencia da piscada.
   const bool busy = (strcmp(st.mode, "busy") == 0);
   if (!blinking && now >= nextBlink) {
     blinking = true;
@@ -437,7 +678,7 @@ void loop() {
   }
   if (blinking && now >= blinkUntil) {
     blinking = false;
-    nextBlink = now + (busy ? random(900, 2000) : random(2800, 6000));
+    nextBlink = now + random(2800, 6000);
   }
 
   // Alvo de abertura: 0% = arregalado, 100% = quase fechado.
@@ -462,9 +703,52 @@ void loop() {
     lastAsleep     = asleep;
   }
 
+  // "?" no canto: o Claude parou e esta esperando uma resposta sua.
+  // ponytail: so o "?", sem os olhos para cima da proposta do SVG — o
+  // ponto de interrogacao ja se le de longe e nao mexe no drawEye.
+  const bool asking = (strcmp(st.mode, "ask") == 0) && !asleep;
+  if (asking != lastAsking) {
+    if (asking) {
+      tft.setTextColor(C_EYE);
+      tft.setTextSize(6);
+      tft.setCursor(ASK_X, ASK_Y);
+      tft.print('?');
+    } else {
+      tft.fillRect(ASK_X, ASK_Y, ASK_W, ASK_H, C_FACE);
+    }
+    lastAsking = asking;
+  }
+
   if (VAL_BARRA != lastDrawnBarra) {
     drawBar(VAL_BARRA);
     lastDrawnBarra = VAL_BARRA;
+  }
+
+  // Clawd andando na barra enquanto o Claude trabalha. Cochilando ele some: um
+  // bicho andando sem ninguem do outro lado do cabo estaria mentindo.
+  if (busy && !asleep) {
+    if (now >= wkNext) {
+      wkNext = now + WK_MS;
+      eraseWalker(wkX);
+      if (wkX < 0) {                       // entrando em cena
+        wkX = WK_X0; wkDir = 1; wkPasso = 0; wkAcena = 0;
+      } else if (wkAcena) {                // parado acenando na ponta
+        if (--wkAcena == 0) wkDir = -wkDir;
+      } else {
+        wkX += wkDir * WK_STEP;
+        wkPasso++;
+        if      (wkX >= WK_X1) { wkX = WK_X1; wkAcena = WK_ACENOS; }
+        else if (wkX <= WK_X0) { wkX = WK_X0; wkAcena = WK_ACENOS; }
+      }
+      // Troca de pose a cada DOIS passos: a 12 passos/s, alternar todo quadro
+      // vira tremedeira em vez de caminhada.
+      const uint8_t pose = wkAcena ? CLAWD_ACENA
+                         : ((wkPasso >> 1) & 1 ? CLAWD_ANDA_B : CLAWD_ANDA_A);
+      drawWalker(wkX, pose);
+    }
+  } else if (wkX >= 0) {
+    eraseWalker(wkX);
+    wkX = -1;
   }
 
   delay(16);  // ~60 fps

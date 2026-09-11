@@ -158,9 +158,10 @@ Confira no topo do arquivo:
 
 E, se o seu módulo não tem CS, o `#define TFT_CS -1` da fase 2.
 
-> **Só se você escolheu Wi-Fi** (`LINK_WIFI 1`): antes de gravar,
-> `cp firmware/claude_mochi/config.example.h firmware/claude_mochi/config.h`
-> e preencha SSID e senha. O `config.h` está no `.gitignore`, então a senha não
+> **Só se você escolheu Wi-Fi** (`LINK_WIFI 1`): antes de gravar, crie
+> `config.h` ao lado do `.ino` — o bloco `#if LINK_WIFI` no topo do sketch
+> traz as três linhas para copiar, é só preencher SSID e senha.
+> O `config.h` está no `.gitignore`, então a senha não
 > vai para o repositório. **Nesse modo o PC e o mochi precisam estar na mesma
 > rede, sem isolamento de cliente** — se for rede de empresa, quase certamente
 > não vai funcionar; fique no serial.

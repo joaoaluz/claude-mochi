@@ -118,6 +118,46 @@ O `resets` é o que faz isso valer a pena, porque o número nunca mente:
 Fica em `~/.claude/mochi-win.json`, junto com a hora do reset e de onde veio o
 número. A status line, quando roda, sobrescreve com o valor exato.
 
+### Cota ao vivo: o widget claude-usage
+
+O `/usage` colado no chat é um retrato; o **claude-usage** — extensão do Chrome
+mais um servidorzinho Python em `127.0.0.1:7878` — é um filme. Ele usa a
+sessão que você já tem logada no claude.ai para consultar a API de uso a cada
+15 s. **Se ele estiver rodando, o mochi passa a preferir esse número**, e a cota
+anda sozinha também no Desktop, sem colar nada.
+
+Não precisa configurar: `mochi.py tokens` tenta o `GET /usage` a cada hook, com
+timeout de 0,4 s. Widget desligado é a falha comum e passa em silêncio — cai de
+volta no `/usage` do transcript. Widget aberto mas com a extensão morta (Chrome
+fechado, sessão caída) devolveria o mesmo número para sempre, então dados com
+mais de **5 minutos** são recusados em vez de congelar a tela.
+
+Trocar a URL: `MOCHI_USAGE_URL`. Conferir se está pegando:
+
+```
+python host/mochi.py doctor
+```
+
+```
+-- cota de 5h --
+valor             37%  (fonte: widget)
+widget usage      ok, cota veio dele
+                  http://127.0.0.1:7878/usage
+```
+
+As duas recusas aparecem com o motivo, porque pedem conserto diferente:
+
+```
+widget usage      nao respondeu (widget fechado?)
+widget usage      dado de 12 min atras (widget de pe, extensao parada; logado no claude.ai?)
+```
+
+Checagem do caminho todo (sobe um `/usage` falso e confere os cortes):
+
+```
+python host/test_mochi_usage.py
+```
+
 **O tamanho da janela não dá para chutar.** O mesmo modelo roda com 200k ou com
 1M dependendo da conta e do beta ligado, e o transcript não diz qual é. Errar
 esse denominador erra a tela inteira: com 200k assumido numa janela de 1M,
@@ -294,9 +334,35 @@ Módulo de 7 pinos (sem CS): pule essa linha e use `#define TFT_CS -1`.
    ST7789 Library*.
 4. Abrir `firmware/claude_mochi/claude_mochi.ino`, conferir `LINK_SERIAL` /
    `LINK_WIFI` no topo, selecionar a placa e gravar.
-5. **Só no modo Wi-Fi:** antes de gravar,
-   `cp firmware/claude_mochi/config.example.h firmware/claude_mochi/config.h`
-   e preencha SSID e senha (`config.h` está no `.gitignore`).
+5. **Só no modo Wi-Fi:** antes de gravar, crie `config.h` ao lado do `.ino`
+   com o SSID e a senha — o bloco `#if LINK_WIFI` no topo do sketch mostra
+   as três linhas. `config.h` está no `.gitignore`, então a senha não vai
+   para o repositório.
+
+#### Sem IDE: gravando pela linha de comando
+
+A IDE é opcional. Com o `arduino-cli` (`winget install ArduinoSA.CLI`), uma vez:
+
+```bash
+arduino-cli config init
+arduino-cli config add board_manager.additional_urls https://arduino.esp8266.com/stable/package_esp8266com_index.json
+arduino-cli core update-index && arduino-cli core install esp8266:esp8266
+arduino-cli lib install "Adafruit GFX Library" "Adafruit ST7735 and ST7789 Library"
+```
+
+E aí, a cada gravação — **parando a ponte antes**, senão ela segura a porta e o
+upload falha com *access denied*:
+
+```bash
+python host/mochi.py stop
+arduino-cli compile --fqbn esp8266:esp8266:nodemcuv2 firmware/claude_mochi
+arduino-cli upload -p COM5 --fqbn esp8266:esp8266:nodemcuv2 firmware/claude_mochi
+python host/mochi.py start
+```
+
+Troque `COM5` pelo que o `mochi.py ports` mostrar. Rode os quatro de uma vez: se
+um hook do Claude Code disparar entre o `stop` e o `upload`, ele levanta a ponte
+de novo e a porta volta a ficar ocupada.
 
 **Se a imagem sair com ruído:** baixe `setSPISpeed` de `40000000` para
 `20000000`. **Se sair de cabeça para baixo ou espelhada:** ajuste
@@ -487,7 +553,6 @@ Há **dois** modelos no repositório, ainda não consolidados:
 |---|---|---|
 | `case/mochi.scad` | ESP8266 + display, **com** janela de tela | renderizado e fechado; medidas de componente ainda por conferir |
 | `hardware/mochi.scad` | Raspberry Pi Zero / Pico, **sem** janela de tela | renderizado, sólido fechado, STLs em [`hardware/stl/`](hardware/stl) |
-| `case/clawd_tela.scad` | **forma do Clawd**, só o display dentro | corta a janela nas malhas do `clawd_mochi.3mf`; as duas peças fecham (`Volumes: 2`) |
 
 O `hardware/` nasceu de um pedido separado, feito sem saber que o `case/` já
 existia — então é o modelo validado geometricamente, mas mira a placa errada
@@ -525,69 +590,18 @@ casca frontal com o rosto virado para a mesa — a janela sai sem suporte (a
 orientação `part="front"` já faz isso). Folga de 0,3 mm em volta do display e
 0,3 mm no lábio da tampa.
 
-### case/clawd_tela.scad — a forma do Clawd, com janela
+### Alternativa: o Clawd original, sem modificação
 
-Trabalha em cima das **malhas do seu `clawd_mochi.3mf`** (Bambu Studio),
-extraídas para `models/upstream/3mf-corpo.stl` e `3mf-chapa.stl`. São as duas
-peças do [clawd-mochi](https://github.com/yousifamanuel/clawd-mochi): chapa
-frontal de 2 mm e corpo com cavidade **passante** de 48,50 × 32,25 mm — no seu
-projeto o corpo está achatado em Z, de 38 para **28 mm** (`m22 = 0,7368` na
-matriz do objeto). Esse achatamento está reproduzido em `escala_z`.
+Chegamos a cortar uma janela de display nas malhas do
+[clawd-mochi](https://github.com/yousifamanuel/clawd-mochi) (o `.3mf` original,
+via Bambu Studio) — mas isso saiu do repositório: **o modelo original, sem
+nenhum corte**, já foi impresso e usado com este projeto, e funcionou. Não
+precisa da janela recortada; mais simples de imprimir e sem depender de
+extrair/remontar malhas de terceiro a cada mudança.
 
-O modelo original tem a cara vazada (boca de 9 × 3,25 mm e dois furinhos de
-3,5 mm nas orelhas), não uma tela. O `.scad` acrescenta:
-
-1. **janela** da área ativa, 28,5 × 28,5 mm, com chanfro de 45° na face de fora
-2. **tampa da boca**, que ficaria mordida pela borda da janela
-3. **moldura interna** que segura a PCB contra a chapa, com saia a 45° para
-   imprimir sem suporte nessa região
-
-As malhas de origem **não são versionadas** (`.gitignore` barra `*.stl` e
-`*.3mf`, e são geometria de terceiro sob CC BY-NC-SA). Regenere a partir do seu
-projeto do fatiador e exporte as peças:
-
-```bash
-python3 models/extrai_3mf.py clawd_mochi.3mf
-```
-
-```bash
-make clawd
-```
-
-Ou peça por peça, sem `make`:
-
-```bash
-openscad -o case/stl/clawd-chapa.stl -D 'part="chapa"' case/clawd_tela.scad
-```
-
-Sem parafuso nenhum: a chapa **cola** no aro do corpo. Só o display vai dentro;
-o ESP8266 fica fora e os fios saem pelo fundo, que já é aberto.
-
-A placa do display (31,5 mm) contra a cavidade (32,25 mm) deixa **0,375 mm por
-lado**. Aperta. Existe `alargar` para comer parte da parede de trás, mas ele só
-corta os `alargar_z` mm de cima: a faixa maciça em Y −10,75..−12,5 fecha o fundo
-da cavidade e é de onde saem as quatro perninhas — cortá-la inteira solta as
-perninhas do corpo.
-
-> ⚠️ As medidas do display são **estimativa** (`pcb_x`, `pcb_y`, `ativa`,
-> `ativa_dx`). Meça o seu módulo com paquímetro antes de imprimir.
-
-**Voltando para o fatiador:** `make clawd-3mf` gera `clawd_mochi_tela.3mf`, o seu
-projeto com as duas malhas trocadas — todos os ajustes de fatiamento, perfis e a disposição no prato
-foram preservados; só a escala em Z saiu da matriz e foi assada na malha. As
-miniaturas guardadas ainda mostram o modelo antigo, sem janela; elas se
-regeneram quando você fatiar.
-
-**Licença:** os modelos de origem são CC BY-NC-SA 4.0 — não comercial, com
-atribuição. O que sai daqui é derivado e herda a mesma licença.
-
-### Alternativa
-
-Os modelos do projeto original (`models/clawd_mochi/clawd_mochi_v1.stl` e
-`.3mf`) estão sob **CC BY-NC-SA 4.0** — uso não comercial, com atribuição e
-compartilhamento pela mesma licença. Só que foram desenhados em volta de um
-ESP32-C3 Super Mini (22,5 × 18 mm); um NodeMCU não cabe. Se o seu ESP8266 for um
-Wemos D1 mini, vale testar; se for NodeMCU, o `.scad` daqui é o caminho.
+Os modelos do projeto original (`clawd_mochi_v1.stl` / `.3mf`) estão sob
+**CC BY-NC-SA 4.0** — uso não comercial, com atribuição e compartilhamento pela
+mesma licença.
 
 ---
 

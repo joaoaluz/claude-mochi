@@ -1,8 +1,6 @@
 # claude-mochi — geracao dos arquivos de impressao
 #
-#   make stl        exporta os STL de todas as placas em hardware/stl/
-#   make clawd      exporta as duas pecas do Clawd com janela em case/stl/
-#   make clawd-3mf  remonta o projeto do fatiador com as pecas novas
+#   make stl     exporta os STL de todas as placas em hardware/stl/
 #   make png     regenera as imagens do guia (precisa de xvfb em servidor)
 #   make clean   apaga o que foi gerado
 #
@@ -23,7 +21,7 @@ BOARDS := pi_zero pico
 STLS := $(foreach b,$(BOARDS),$(STLDIR)/$(b)-casca.stl $(STLDIR)/$(b)-base.stl)
 PNGS := $(IMGDIR)/frente.png $(IMGDIR)/montado.png $(IMGDIR)/corte.png $(IMGDIR)/base.png
 
-.PHONY: all stl png clean clawd clawd-3mf
+.PHONY: all stl png clean
 all: stl
 
 stl: $(STLS)
@@ -54,22 +52,5 @@ $(IMGDIR)/base.png: $(SRC) | $(IMGDIR)
 	$(RENDER) -o $@ --imgsize=800,600 --camera=0,0,2,55,0,25,240 \
 	  --projection=p --colorscheme=Tomorrow -D 'part="base"' $(MAIN)
 
-# --- Clawd com janela de display -------------------------------------------
-# Precisa de models/upstream/*.stl; se faltar, rode antes:
-#   python3 models/extrai_3mf.py clawd_mochi.3mf
-CLAWD    := case/clawd_tela.scad
-CLAWDDIR := case/stl
-
-clawd: $(CLAWDDIR)/clawd-chapa.stl $(CLAWDDIR)/clawd-corpo.stl
-
-$(CLAWDDIR):
-	mkdir -p $@
-
-$(CLAWDDIR)/clawd-%.stl: $(CLAWD) | $(CLAWDDIR)
-	$(OPENSCAD) -o $@ --export-format=binstl -D 'part="$*"' $(CLAWD)
-
-clawd-3mf: clawd
-	python3 models/monta_3mf.py
-
 clean:
-	rm -rf $(STLDIR) $(IMGDIR) $(CLAWDDIR)
+	rm -rf $(STLDIR) $(IMGDIR)

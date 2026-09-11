@@ -1,33 +1,49 @@
 #!/usr/bin/env python3
+import pathlib
+import sys
+
 """Gera docs/tela/tela-mochi.svg — o mapa do que aparece no display.
 
 As constantes e a matematica sao copiadas de
-firmware/claude_mochi/claude_mochi.ino (branch claude-mochi-token-eyes),
-inclusive o truncamento inteiro, para o desenho bater pixel a pixel com o
-que o ST7789 mostra. Mudou o firmware? Ajuste aqui e rode de novo:
+firmware/claude_mochi/claude_mochi.ino, inclusive o truncamento inteiro, para
+o desenho bater pixel a pixel com o que o ST7789 mostra. Mudou o firmware?
+Ajuste o bloco abaixo (ele espelha o .ino um por um) e rode de novo:
 
     python3 docs/tela/gera_svg.py
 """
 
+# O clawd vem do MESMO desenho que o firmware usa. Importar em vez de copiar
+# e o unico jeito de nao ter duas versoes do bicho divergindo em silencio.
+sys.path.insert(0, str(pathlib.Path(__file__).resolve().parents[2] / "firmware"))
+import gera_sprites as clawd            # noqa: E402
+
 # ----------------------------------------------------------- firmware ------
 SCR      = 240
-EYE_CX_L = 78
-EYE_CX_R = 162
+EYE_CX_L = 72
+EYE_CX_R = 168
 EYE_CY   = 104
-EYE_RX   = 30
-EYE_RY   = 34
+EYE_RX   = 36
+EYE_RY   = 42
 BAR_X    = 34
 BAR_Y    = 206
 BAR_H    = 10
 BAR_W    = SCR - 2 * BAR_X
 
-C_FACE  = 0xF71C
+# o clawd que anda sobre a barra enquanto state=busy (poses em gera_sprites.py)
+WK_W    = clawd.W
+WK_H    = clawd.H
+WK_FEET = BAR_Y - 1
+WK_X0   = BAR_X
+WK_X1   = BAR_X + BAR_W - WK_W
+WK_STEP = 4
+
+C_FACE  = 0xFB26
 C_EYE   = 0x18E3
 C_OK    = 0x2E88
 C_WARN  = 0xFCA0
 C_HOT   = 0xE0A3
 C_SHINE = 0xFFFF
-C_TRACK = 0xE71C
+C_TRACK = 0x8A44
 C_SLEEP = 0xD69A
 
 
@@ -80,7 +96,7 @@ def eye(cx, cy, ry, iris, *, crossed=False, asleep=False, dx=0, dy=0):
             f'height="5" rx="2" fill="{SLEEP}"/>')
         return
     if crossed:
-        r = 22
+        r = 28
         for x1, y1, x2, y2 in ((cx-r, cy-r, cx+r, cy+r), (cx-r, cy+r, cx+r, cy-r)):
             add(f'<line x1="{x1}" y1="{y1}" x2="{x2}" y2="{y2}" stroke="{EYE}" '
                 f'stroke-width="5" stroke-linecap="round"/>')
@@ -95,7 +111,30 @@ def eye(cx, cy, ry, iris, *, crossed=False, asleep=False, dx=0, dy=0):
         add(f'<ellipse cx="{cx}" cy="{cy}" rx="{int(EYE_RX*0.55)}" ry="{iry}" '
             f'fill="{rgb(iris)}"/>')
     if ry > EYE_RY * 0.45:
-        add(f'<circle cx="{cx-EYE_RX//3}" cy="{cy-ry//2}" r="4" fill="#ffffff"/>')
+        add(f'<circle cx="{cx-EYE_RX//3}" cy="{cy-ry//2}" r="5" fill="#ffffff"/>')
+
+
+def walker(x, pose=0, sobe=0):
+    """Uma pose do clawd, pixel a pixel, como o drawBitmap() do firmware faz.
+
+    Emite corridas horizontais em vez de um <rect> por pixel — mesma imagem,
+    um decimo do arquivo.
+    """
+    g = clawd.POSES[pose][1]
+    y0 = WK_FEET - WK_H + 1 - sobe
+    for j, linha in enumerate(g):
+        i = 0
+        while i < WK_W:
+            ch = linha[i]
+            if ch == " ":
+                i += 1
+                continue
+            k = i
+            while k < WK_W and linha[k] == ch:
+                k += 1
+            cor = "#ffffff" if ch == "o" else EYE
+            add(f'<rect x="{x+i}" y="{y0+j}" width="{k-i}" height="1" fill="{cor}"/>')
+            i = k
 
 
 def brow(cx, angle_up):
@@ -171,7 +210,7 @@ def para(x, y, titulo, corpo, width=54, size=13.5):
     return y + 22 + len(wrap(corpo, width)) * 19
 
 
-W, H = 1180, 1740
+W, H = 1180, 2135
 add(f'<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 {W} {H}" width="{W}" '
     f'height="{H}" font-family="{SANS}">')
 add(f'<rect width="{W}" height="{H}" fill="{BG}"/>')
@@ -206,11 +245,11 @@ for i, ctx in enumerate([0, 30, 60, 85, 96]):
 
 # ------------------------------------------------------ 2. estados extras ---
 title(60, 566, "02", "Estados que não vêm do número",
-      "piscar é local (mais rápido quando state=busy) · dormir é a ausência de notícias do PC por 30 s")
+      "piscar é local e num ritmo só — quem diz «trabalhando» é o clawd da seção 03 · dormir é a ausência de notícias do PC por 30 s")
 
 TOP2 = 646
 specials = [
-    ("piscando", ["openTarget = 0 por 110 ms", "state=busy → 0,9–2,0 s", "state=idle → 2,8–6,0 s"],
+    ("piscando", ["openTarget = 0 por 110 ms", "volta em 2,8–6,0 s", "independe de state"],
      lambda: (eye(EYE_CX_L, EYE_CY, 0, C_OK), eye(EYE_CX_R, EYE_CY, 0, C_OK), bar(28))),
     ("dormindo", ["sem ping há 30 s", "traço cinza #d6d2d6", "volta sozinho ao 1º ping"],
      lambda: (eye(EYE_CX_L, EYE_CY, 0, C_OK, asleep=True),
@@ -242,8 +281,60 @@ for i, (k, v) in enumerate([
     add(f'<text x="{lx}" y="{ly+126+i*22}" fill="{DIM}" font-family="{MONO}" '
         f'font-size="12.5">{k.ljust(17).replace(" ", "&#160;")}{v}</text>')
 
-# ------------------------------------------------------- 3. expressoes -----
-title(60, 975, "03", "Proposta: expressões vindas dos hooks",
+# ------------------------------------------------------- 3. o clawd -------
+title(60, 975, "03", "Trabalhando: o clawd anda na barra",
+      "state=busy · um passo de 4 px a cada 80 ms, de ponta a ponta da barra · na ponta ele acena e volta · some quando o mochi cochila")
+
+
+def cena_clawd():
+    ry, iris = eye_h(63), level_color(63)
+    eye(EYE_CX_L, EYE_CY, ry, iris)
+    eye(EYE_CX_R, EYE_CY, ry, iris)
+    bar(63)
+    walker((WK_X0 + WK_X1) // 2, 0, sobe=1)
+
+
+screen(60, 1050, 0.80, cena_clawd, "state=busy",
+       ["passo de 4 px / 80 ms", f"sprite {WK_W}×{WK_H} px, x de {WK_X0} a {WK_X1}",
+        "olhos seguem a cota, não o modo"])
+
+# as poses ampliadas — e o zoom que mostra os tufos e a pupila
+ZX, ZY, Z = 330, 1062, 5
+add(f'<text x="{ZX}" y="{ZY-16}" fill="{FG}" font-size="15" font-weight="600">'
+    f'As poses, {Z}×</text>')
+for i, (nome, _) in enumerate(clawd.POSES):
+    ox = ZX + i * (WK_W * Z + 20)
+    add(f'<rect x="{ox-2}" y="{ZY-2}" width="{WK_W*Z+4}" height="{WK_H*Z+4}" '
+        f'rx="6" fill="{FACE}" stroke="#3a342e"/>')
+    add(f'<g transform="translate({ox},{ZY}) scale({Z}) '
+        f'translate({-WK_X0},{-(WK_FEET-WK_H+1)})">')
+    walker(WK_X0, i)
+    add('</g>')
+    # o topo da barra, para se ver que o pe encosta
+    add(f'<rect x="{ox}" y="{ZY+WK_H*Z}" width="{WK_W*Z}" height="{Z}" '
+        f'fill="{rgb(level_color(63))}"/>')
+    add(f'<text x="{ox+WK_W*Z/2}" y="{ZY+WK_H*Z+30}" text-anchor="middle" fill="{DIM}" '
+        f'font-family="{MONO}" font-size="12.5">{nome.lower()}</text>')
+
+cy_ = 1050 + 8
+cy_ = para(680, cy_ + 14, "Por que não piscar mais rápido",
+           "piscada acelerada não se lê como trabalho, se lê como nervosismo — e "
+           "mistura dois canais no mesmo lugar. Agora os olhos dizem só quanto da "
+           "cota já foi, e o clawd diz só se está rodando agora.", width=52)
+cy_ = para(680, cy_ + 24, "Duas camadas, três cores",
+           "CORPO pinta a silhueta de escuro, OLHOS pinta só o branco por cima. "
+           "A pupila é o buraco no branco, com o corpo aparecendo por baixo — três "
+           "cores sem bitmap colorido e sem tabela de paleta.", width=52)
+cy_ = para(680, cy_ + 24, "Custo no ESP8266",
+           "uma fillRect de 24×27 para apagar e dois drawBitmap para desenhar, 12 "
+           "vezes por segundo. A barra fica em y 206 e a caixa do sprite termina em "
+           "205: um não encosta no outro, então nada precisa ser redesenhado.", width=52)
+cy_ = para(680, cy_ + 24, "Cochilando ele some",
+           "sem notícias do PC há 30 s o clawd sai da tela. Um bicho andando sem "
+           "ninguém do outro lado do cabo estaria mentindo.", width=52)
+
+# ------------------------------------------------------- 4. expressoes -----
+title(60, 1370, "04", "Proposta: expressões vindas dos hooks",
       "o que ainda não existe no firmware — cada rosto usa só primitivas do Adafruit_GFX")
 
 SC3, GAP3 = 0.75, 24
@@ -285,11 +376,11 @@ exprs = [
 ]
 for i, (cap, hook, body) in enumerate(exprs):
     col, row = i % 3, i // 3
-    screen(60 + col * (SCR * SC3 + GAP3), 1050 + row * 266, SC3, body, cap,
+    screen(60 + col * (SCR * SC3 + GAP3), 1445 + row * 266, SC3, body, cap,
            [hook], accent=True)
 
 # ------------------------------------------------- painel lateral ----------
-px, py = 716, 1044
+px, py = 716, 1439
 add(f'<rect x="{px-22}" y="{py-34}" width="{W-px-38}" height="672" rx="14" '
     f'fill="#1b1714" stroke="#2b2722"/>')
 add(f'<text x="{px}" y="{py}" fill="{FG}" font-size="15" font-weight="600">'
